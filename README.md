@@ -6,17 +6,30 @@ Compares images
 
 Inspired by the image compare feature "Visual verification API" of [TestApi](https://blogs.msdn.microsoft.com/ivo_manolov/2009/04/20/introduction-to-testapi-part-3-visual-verification-apis/) this code supports comparing images by using a tolerance mask image. That tolerance mask image is a valid image by itself and can be manipulated.
 
-SkiaSharpCompare focus on os agnostic support and therefore depends on [SixLaborsSkiaSharp](https://github.com/mono/SkiaSharp).
+SkiaSharpCompare focus on os agnostic support and therefore depends on [SkiaSharp](https://github.com/mono/SkiaSharp).
 
-**NOTE**: For now the comparer ignores **A**lpha-channel.
+**NOTE**: The Alpha-channel is ignored.
 
 ## Example simple show cases
 
-```csharp
-bool imagesAreEqual = SkiaSharpCompare.ImagesAreEqual("actual.png", "expected.png");
+### Compares each RGB value of each pixel to determine the equality
 
-// calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
-ICompareResult calcDiff = SkiaSharpCompare.CalcDiff("actual.png", "expected.png");
+```csharp
+bool isEqual = Compare.ImagesAreEqual("actual.png", "expected.png");
+```
+
+### Calculates diff
+
+```csharp
+var calcDiff = Compare.CalcDiff("2x2PixelBlack.png", "2x2PixelWhite.png");
+Console.WriteLine($"PixelErrorCount: {diff.PixelErrorCount}");
+Console.WriteLine($"PixelErrorPercentage: {diff.PixelErrorPercentage}");
+Console.WriteLine($"AbsoluteError: {diff.AbsoluteError}");
+Console.WriteLine($"MeanError: {diff.MeanError}");
+// PixelErrorCount: 4
+// PixelErrorPercentage: 100
+// AbsoluteError: 3060
+// MeanError: 765
 ```
 
 ## Example show case allowing some tolerated diff
@@ -33,7 +46,7 @@ Imagine two images you want to compare, and want to accept the found difference 
 
 ### Tolerance mask image
 
-using "compare.CalcDiff" you can calc a diff mask from actual and reference image
+Using **CalcDiffMaskImage** you can calc a diff mask from actual and reference image
 
 Example - Create difference image
 

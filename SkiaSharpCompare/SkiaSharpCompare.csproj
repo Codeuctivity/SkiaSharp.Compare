@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+	    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RepositoryUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</RepositoryUrl>
@@ -28,28 +28,21 @@
 		<LangVersion>8.0</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<PackageId>Codeuctivity.SkiaSharpCompare</PackageId>
-		<PackageReadmeFile>nugetReadme.md</PackageReadmeFile>
-    <Product>Codeuctivity.SkiaSharpCompare</Product>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Product>Codeuctivity.SkiaSharpCompare</Product>
 		<AssemblyName>Codeuctivity.SkiaSharpCompare</AssemblyName>
 		<RootNamespace>Codeuctivity.SkiaSharpCompare</RootNamespace>
 		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-	  <Optimize>True</Optimize>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
-	  <Optimize>True</Optimize>
-	</PropertyGroup>
-
 	<ItemGroup>
-		<None Include="docs\nugetReadme.md" Pack="true" PackagePath="\" />
+		<None Include="../README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-		<PackageReference Include="SkiaSharp" Version="2.88.2" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.2" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.45.0.54064">
+	    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+		<PackageReference Include="SkiaSharp" Version="2.88.3" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -59,4 +52,4 @@
 		<None Include="NugetIcon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
-</Project>	
+</Project>
