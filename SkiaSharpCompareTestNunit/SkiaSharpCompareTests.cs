@@ -358,7 +358,7 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(colorShift1, colorShift2, TransparencyOptions.IgnoreAlphaChannel, 20)]
         [TestCase(pngTransparent2x2px, pngPartialTransparent2x2px, TransparencyOptions.IgnoreAlphaChannel, 0)]
         [TestCase(pngTransparent2x2px, pngPartialTransparent2x2px, TransparencyOptions.CompareAlphaChannel, 0)]
-        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByFilePath_NoDifferences(string image1RelativePath, string image2RelativePath, int pixelColorShiftTolerance, TransparencyOptions transparencyOptions)
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByFilePath_NoDifferences(string image1RelativePath, string image2RelativePath, TransparencyOptions transparencyOptions, int pixelColorShiftTolerance)
         {
             var sut = new ImageCompare(ResizeOption.DontResize, transparencyOptions, pixelColorShiftTolerance);
             var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
