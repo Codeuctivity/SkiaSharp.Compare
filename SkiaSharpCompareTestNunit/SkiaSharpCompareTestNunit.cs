@@ -375,9 +375,9 @@ namespace SkiaSharpCompareTestNunit
             File.Delete(diffMask1Path);
         }
 
-        [TestCase(png0Rgba32, png1Rgba32, png1Rgba32,0, false)]
+        [TestCase(png0Rgba32, png1Rgba32, png1Rgba32, 0, false)]
         [TestCase(colorShift1, colorShift1, colorShift2, 15, true)]
-        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByImage_NoDifferences(string image1RelativePath, string image2RelativePath, string image3RelativePath, int expectedPixelColorShiftTolerance, bool expectToleranceMaskToEntirelyBlack )
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByImage_NoDifferences(string image1RelativePath, string image2RelativePath, string image3RelativePath, int expectedPixelColorShiftTolerance, bool expectToleranceMaskToEntirelyBlack)
         {
             var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
             var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
