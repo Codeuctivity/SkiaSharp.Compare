@@ -102,9 +102,24 @@ namespace Codeuctivity.SkiaSharpCompare
                 {
                     for (var y = 0; y < actual.Height; y++)
                     {
-                        if (!actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
+                        if (pixelColorShiftTolerance == 0 && !actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
                         {
                             return false;
+                        }
+                        else
+                        {
+                            var actualPixel = actual.GetPixel(x, y);
+                            var expectedPixel = expected.GetPixel(x, y);
+
+                            var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                            var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                            var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                            var sum = r + g + b;
+
+                            if (sum > pixelColorShiftTolerance)
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -472,7 +487,26 @@ namespace Codeuctivity.SkiaSharpCompare
                         var blue = (byte)Math.Abs(actualPixel.Blue - expectedPixel.Blue);
                         var pixel = new SKColor(red, green, blue);
 
-                        maskImage.SetPixel(x, y, pixel);
+                        if (pixelColorShiftTolerance == 0)
+                        {
+                            maskImage.SetPixel(x, y, pixel);
+                        }
+                        else
+                        {
+                            var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                            var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                            var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                            var sum = r + g + b;
+
+                            if (sum > pixelColorShiftTolerance)
+                            {
+                                maskImage.SetPixel(x, y, pixel);
+                            }
+                            else
+                            {
+                                maskImage.SetPixel(x, y, 0);
+                            }
+                        }
                     }
                 }
                 return maskImage;
@@ -527,7 +561,26 @@ namespace Codeuctivity.SkiaSharpCompare
                         var blue = (byte)(Math.Abs(actualPixel.Blue - expectedPixel.Blue) - maskPixel.Blue);
                         var pixel = new SKColor(red, green, blue);
 
-                        maskImage.SetPixel(x, y, pixel);
+                        if (pixelColorShiftTolerance == 0)
+                        {
+                            maskImage.SetPixel(x, y, pixel);
+                        }
+                        else
+                        {
+                            var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                            var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                            var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                            var sum = r + g + b;
+
+                            if (sum > pixelColorShiftTolerance)
+                            {
+                                maskImage.SetPixel(x, y, pixel);
+                            }
+                            else
+                            {
+                                maskImage.SetPixel(x, y, 0);
+                            }
+                        }
                     }
                 }
                 return maskImage;
@@ -551,8 +604,8 @@ namespace Codeuctivity.SkiaSharpCompare
             var biggestWidth = actual.Width > expected.Width ? actual.Width : expected.Width;
             var biggestHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
             var skSize = new SKSizeI(biggestWidth, biggestHeight);
-            var grownExpected = expected.Resize(skSize, SKFilterQuality.None);
-            var grownActual = actual.Resize(skSize, SKFilterQuality.None);
+            var grownExpected = expected.Resize(skSize, SKSamplingOptions.Default);
+            var grownActual = actual.Resize(skSize, SKSamplingOptions.Default);
 
             return (grownActual, grownExpected);
         }
@@ -564,9 +617,9 @@ namespace Codeuctivity.SkiaSharpCompare
             var biggestHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
             biggestHeight = biggestHeight > mask.Height ? biggestHeight : mask.Height;
             var skSize = new SKSizeI(biggestWidth, biggestHeight);
-            var grownExpected = expected.Resize(skSize, SKFilterQuality.None);
-            var grownActual = actual.Resize(skSize, SKFilterQuality.None);
-            var grownMask = mask.Resize(skSize, SKFilterQuality.None);
+            var grownExpected = expected.Resize(skSize, SKSamplingOptions.Default);
+            var grownActual = actual.Resize(skSize, SKSamplingOptions.Default);
+            var grownMask = mask.Resize(skSize, SKSamplingOptions.Default);
 
             return (grownActual, grownExpected, grownMask);
         }
