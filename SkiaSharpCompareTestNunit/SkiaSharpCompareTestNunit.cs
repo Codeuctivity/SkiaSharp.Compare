@@ -210,7 +210,7 @@ namespace SkiaSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
             using (var maskImage = Compare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, resizeOption))
             {
-                SaveAsPng(maskImage, fileStreamDifferenceMask);
+                IntegrationTest.SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             var maskedDiff = Compare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, resizeOption);
@@ -222,7 +222,7 @@ namespace SkiaSharpCompareTestNunit
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
-        private void SaveAsPng(SKBitmap maskImage, FileStream fileStreamDifferenceMask)
+        private static void SaveAsPng(SKBitmap maskImage, FileStream fileStreamDifferenceMask)
         {
             var encodedData = maskImage.Encode(SKEncodedImageFormat.Png, 100);
             encodedData.SaveTo(fileStreamDifferenceMask);
@@ -244,7 +244,7 @@ namespace SkiaSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
             using (var maskImage = Compare.CalcDiffMaskImage(absolutePic1, absolutePic2, resizeOption))
             {
-                SaveAsPng(maskImage, fileStreamDifferenceMask);
+                IntegrationTest.SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             using var differenceMaskPic = SKBitmap.Decode(differenceMaskPicPath);
