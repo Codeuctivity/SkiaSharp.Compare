@@ -24,4 +24,3 @@ Console.WriteLine($"MeanError: {diff.MeanError}");
 
 - Diff mask: allowing defined areas to diff from the compared image.
 - Compare images that have different dimension
-- Linux, MacOs and Windows supported
