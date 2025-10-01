@@ -201,7 +201,7 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(pngBlack4x4px, pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(renderedForm1, renderedForm2, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(renderedForm2, renderedForm1, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void Diffmask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        public void DiffMask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -210,7 +210,7 @@ namespace SkiaSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
             using (var maskImage = Compare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, resizeOption))
             {
-                IntegrationTest.SaveAsPng(maskImage, fileStreamDifferenceMask);
+                SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             var maskedDiff = Compare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, resizeOption);
@@ -244,7 +244,7 @@ namespace SkiaSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
             using (var maskImage = Compare.CalcDiffMaskImage(absolutePic1, absolutePic2, resizeOption))
             {
-                IntegrationTest.SaveAsPng(maskImage, fileStreamDifferenceMask);
+                SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             using var differenceMaskPic = SKBitmap.Decode(differenceMaskPicPath);

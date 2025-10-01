@@ -217,22 +217,22 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(pngBlack4x4px, pngWhite2x2px, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(renderedForm1, renderedForm2, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(renderedForm2, renderedForm1, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
-        public void Diffmask(string pathPic1, string pathPic2, ResizeOption resizeOption, TransparencyOptions transparancyOPtions)
+        public void Diffmask(string pathPic1, string pathPic2, ResizeOption resizeOption, TransparencyOptions transparencyOptions)
         {
-            var sut = new ImageCompare(resizeOption, transparancyOPtions);
+            var sut = new ImageCompare(resizeOption, transparencyOptions);
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
-            using var absolutPic1 = SKBitmap.Decode(absolutePathPic1);
-            using var absolutPic2 = SKBitmap.Decode(absolutePathPic2);
+            using var absolutePic1 = SKBitmap.Decode(absolutePathPic1);
+            using var absolutePic2 = SKBitmap.Decode(absolutePathPic2);
             var differenceMask = Path.GetTempFileName() + "differenceMask.png";
 
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
-            using (var maskImage = sut.CalcDiffMaskImage(absolutPic1, absolutPic2))
+            using (var maskImage = sut.CalcDiffMaskImage(absolutePic1, absolutePic2))
             {
                 SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
-            var maskedDiff = Compare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, resizeOption);
+            var maskedDiff = Compare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, resizeOption, 0, transparencyOptions);
             File.Delete(differenceMask);
 
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(0), "AbsoluteError");
@@ -241,7 +241,7 @@ namespace SkiaSharpCompareTestNunit
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(0), "PixelErrorPercentage");
         }
 
-        private void SaveAsPng(SKBitmap maskImage, FileStream fileStreamDifferenceMask)
+        private static void SaveAsPng(SKBitmap maskImage, FileStream fileStreamDifferenceMask)
         {
             var encodedData = maskImage.Encode(SKEncodedImageFormat.Png, 100);
             encodedData.SaveTo(fileStreamDifferenceMask);

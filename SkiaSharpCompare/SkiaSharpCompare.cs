@@ -105,16 +105,7 @@ namespace Codeuctivity.SkiaSharpCompare
                 {
                     for (var y = 0; y < actual.Height; y++)
                     {
-                        if (transparencyOptions == TransparencyOptions.IgnoreAlphaChannel)
-                        {
-                            var actualPixel = actual.GetPixel(x, y);
-                            var expectedPixel = expected.GetPixel(x, y);
-                            if (actualPixel.Red != expectedPixel.Red || actualPixel.Green != expectedPixel.Green || actualPixel.Blue != expectedPixel.Blue)
-                            {
-                                return false;
-                            }
-                        }
-                        else if (!actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
+                        if (transparencyOptions == TransparencyOptions.CompareAlphaChannel && pixelColorShiftTolerance == 0 && !actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
                         {
                             return false;
                         }
@@ -122,11 +113,17 @@ namespace Codeuctivity.SkiaSharpCompare
                         {
                             var actualPixel = actual.GetPixel(x, y);
                             var expectedPixel = expected.GetPixel(x, y);
+                            var a = 0;
+
+                            if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
+                            {
+                                a = Math.Abs(expectedPixel.Alpha - actualPixel.Alpha);
+                            }
 
                             var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
                             var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
                             var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
-                            var sum = r + g + b;
+                            var sum = r + g + b + a;
 
                             if (sum > pixelColorShiftTolerance)
                             {
@@ -525,17 +522,58 @@ namespace Codeuctivity.SkiaSharpCompare
                         var green = (byte)Math.Abs(actualPixel.Green - expectedPixel.Green);
                         var blue = (byte)Math.Abs(actualPixel.Blue - expectedPixel.Blue);
 
-                        if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
+                        if (pixelColorShiftTolerance == 0)
                         {
-                            var alpha = (byte)Math.Abs(actualPixel.Alpha - expectedPixel.Alpha);
-                            var pixel = new SKColor(red, green, blue);
-                            pixel.WithAlpha(alpha);
-                            maskImage.SetPixel(x, y, pixel);
+                            if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
+                            {
+                                var alpha = (byte)Math.Abs(actualPixel.Alpha - expectedPixel.Alpha);
+                                var pixel = new SKColor(red, green, blue, alpha);
+                                maskImage.SetPixel(x, y, pixel);
+                            }
+                            else
+                            {
+                                var pixel = new SKColor(red, green, blue);
+                                maskImage.SetPixel(x, y, pixel);
+                            }
                         }
                         else
                         {
-                            var pixel = new SKColor(red, green, blue);
-                            maskImage.SetPixel(x, y, pixel);
+                            if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
+                            {
+                                var alpha = (byte)Math.Abs(actualPixel.Alpha - expectedPixel.Alpha);
+                                var pixel = new SKColor(red, green, blue, alpha);
+                                var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                                var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                                var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                                var a = Math.Abs(expectedPixel.Alpha - actualPixel.Alpha);
+                                var sum = r + g + b + a;
+
+                                if (sum > pixelColorShiftTolerance)
+                                {
+                                    maskImage.SetPixel(x, y, pixel);
+                                }
+                                else
+                                {
+                                    maskImage.SetPixel(x, y, 0);
+                                }
+                            }
+                            else
+                            {
+                                var pixel = new SKColor(red, green, blue);
+                                var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                                var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                                var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                                var sum = r + g + b;
+
+                                if (sum > pixelColorShiftTolerance)
+                                {
+                                    maskImage.SetPixel(x, y, pixel);
+                                }
+                                else
+                                {
+                                    maskImage.SetPixel(x, y, 0);
+                                }
+                            }
                         }
                     }
                 }
@@ -590,12 +628,59 @@ namespace Codeuctivity.SkiaSharpCompare
                         var red = (byte)(Math.Abs(actualPixel.Red - expectedPixel.Red) - maskPixel.Red);
                         var green = (byte)(Math.Abs(actualPixel.Green - expectedPixel.Green) - maskPixel.Green);
                         var blue = (byte)(Math.Abs(actualPixel.Blue - expectedPixel.Blue) - maskPixel.Blue);
+
                         if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
                         {
                             var alpha = (byte)(Math.Abs(actualPixel.Alpha - expectedPixel.Alpha) - maskPixel.Alpha);
-                            maskImage.SetPixel(x, y, new SKColor(red, green, blue, alpha));
+                            var pixel = new SKColor(red, green, blue, alpha);
+
+                            if (pixelColorShiftTolerance == 0)
+                            {
+                                maskImage.SetPixel(x, y, pixel);
+                            }
+                            else
+                            {
+                                var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                                var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                                var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                                var a = Math.Abs(expectedPixel.Alpha - actualPixel.Alpha);
+                                var sum = r + g + b + a;
+
+                                if (sum > pixelColorShiftTolerance)
+                                {
+                                    maskImage.SetPixel(x, y, pixel);
+                                }
+                                else
+                                {
+                                    maskImage.SetPixel(x, y, 0);
+                                }
+                            }
                         }
-                        maskImage.SetPixel(x, y, new SKColor(red, green, blue, 0));
+                        else
+                        {
+                            var pixel = new SKColor(red, green, blue);
+
+                            if (pixelColorShiftTolerance == 0)
+                            {
+                                maskImage.SetPixel(x, y, pixel);
+                            }
+                            else
+                            {
+                                var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                                var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                                var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                                var sum = r + g + b;
+
+                                if (sum > pixelColorShiftTolerance)
+                                {
+                                    maskImage.SetPixel(x, y, pixel);
+                                }
+                                else
+                                {
+                                    maskImage.SetPixel(x, y, 0);
+                                }
+                            }
+                        }
                     }
                 }
                 return maskImage;
