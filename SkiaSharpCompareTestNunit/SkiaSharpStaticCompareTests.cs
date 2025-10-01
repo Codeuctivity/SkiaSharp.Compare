@@ -6,7 +6,7 @@ using System.IO;
 
 namespace SkiaSharpCompareTestNunit
 {
-    public class IntegrationTest
+    public class SkiaSharpStaticCompareTests
     {
         private const string jpg0Rgb24 = "../../../TestData/Calc0.jpg";
         private const string jpg1Rgb24 = "../../../TestData/Calc1.jpg";
