@@ -228,6 +228,23 @@ namespace SkiaSharpCompareTestNunit
             encodedData.SaveTo(fileStreamDifferenceMask);
         }
 
+        [TestCase(pngBlack2x2px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(pngBlack2x2px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.DontResize)]
+        [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
+        public void ShouldCalcDiffMaskSKBitmap(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        {
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+
+            using var absolutePic1 = SKBitmap.Decode(absolutePathPic1);
+            using var absolutePic2 = SKBitmap.Decode(absolutePathPic2);
+
+            using (var maskImage = Compare.CalcDiffMaskImage(absolutePic1, absolutePic2, resizeOption))
+            {
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage));
+            }
+        }
+
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize)]
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize)]
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
@@ -341,7 +358,7 @@ namespace SkiaSharpCompareTestNunit
                 ImageExtensions.SaveAsPng(diffMask2Image, diffMask2Stream);
             }
 
-            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.EqualTo(expectIsImageEntirelyBlack));
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.EqualTo(expectIsImageEntirelyBlack));
 
             File.Delete(diffMask1Path);
         }
@@ -369,7 +386,7 @@ namespace SkiaSharpCompareTestNunit
             {
                 diffMask1Stream.Position = 0;
                 using var diffMask2Image = Compare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
-                Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
             }
 
             File.Delete(diffMask1Path);
@@ -391,8 +408,8 @@ namespace SkiaSharpCompareTestNunit
 
             using var diffMask2Image = Compare.CalcDiffMaskImage(image1, image3, diffMask1Image, pixelColorShiftTolerance: expectedPixelColorShiftTolerance);
 
-            Assert.That(IsImageEntirelyBlack(diffMask1Image), Is.EqualTo(expectToleranceMaskToEntirelyBlack));
-            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image), Is.EqualTo(expectToleranceMaskToEntirelyBlack));
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
         }
 
         [TestCase(png0Rgba32, png0Rgba32, 0)]
@@ -408,7 +425,7 @@ namespace SkiaSharpCompareTestNunit
 
             using var diffMask1Image = Compare.CalcDiffMaskImage(image1, image2, pixelColorShiftTolerance: expectedPixelColorShiftTolerance);
 
-            Assert.That(IsImageEntirelyBlack(diffMask1Image), Is.True);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image), Is.True);
         }
 
         [Test]
@@ -467,23 +484,6 @@ namespace SkiaSharpCompareTestNunit
             var exception = Assert.Throws<SkiaSharpCompareException>(() => Compare.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3));
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
-        }
-
-        private static bool IsImageEntirelyBlack(SKBitmap image)
-        {
-            for (var x = 0; x < image.Width; x++)
-            {
-                for (var y = 0; y < image.Height; y++)
-                {
-                    var sKColor = image.GetPixel(x, y);
-                    if (sKColor.Red != 0 || sKColor.Green != 0 || sKColor.Blue != 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
     }
 }

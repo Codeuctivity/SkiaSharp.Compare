@@ -3,8 +3,25 @@ using System.IO;
 
 namespace Codeuctivity.SkiaSharpCompare
 {
+    /// <summary>
+    /// Provides functionality for comparing images and calculating differences between them.
+    /// </summary>
+    /// <remarks>The <see cref="ImageCompare"/> class allows users to compare images using various options,
+    /// such as resizing,  transparency handling, and pixel color shift tolerance. It supports multiple input types,
+    /// including file paths,  streams, and in-memory bitmaps. The class also provides methods to generate difference
+    /// masks and check for  image equality or size equality.</remarks>
     public class ImageCompare
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageCompare"/> class with the specified options for resizing,
+        /// transparency handling, and color shift tolerance.
+        /// </summary>
+        /// <param name="resizeOption">Specifies how images should be resized before comparison. The default is <see
+        /// cref="ResizeOption.DontResize"/>.</param>
+        /// <param name="transparencyOptions">Specifies how transparency should be handled during comparison. The default is <see
+        /// cref="TransparencyOptions.CompareAlphaChannel"/>.</param>
+        /// <param name="pixelColorShiftTolerance">Specifies the tolerance for color shifts in pixel values during comparison.  A value of 0 means no
+        /// tolerance, and higher values allow for greater differences. The default is 0.</param>
         public ImageCompare(ResizeOption resizeOption = ResizeOption.DontResize, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, int pixelColorShiftTolerance = 0)
         {
             ResizeOption = resizeOption;
@@ -12,10 +29,31 @@ namespace Codeuctivity.SkiaSharpCompare
             PixelColorShiftTolerance = pixelColorShiftTolerance;
         }
 
+        /// <summary>
+        /// Gets the resize option that determines how an image should be resized.
+        /// </summary>
         public ResizeOption ResizeOption { get; }
+
+        /// <summary>
+        /// Gets the transparency options that determine how transparency should be handled during image comparison.
+        /// </summary>
         public TransparencyOptions TransparencyOptions { get; }
+
+        /// <summary>
+        /// Gets the tolerance level for pixel color shifts in image processing operations.
+        /// </summary>
+        /// <remarks>This property is typically used to determine whether two pixels are considered
+        /// similar in color during image comparison or analysis tasks.</remarks>
         public int PixelColorShiftTolerance { get; }
 
+        /// <summary>
+        /// Calculates the difference between two images located at the specified file paths.
+        /// </summary>
+        /// <remarks>The comparison process may involve resizing the images or applying tolerances for
+        /// pixel color shifts and transparency, depending on the configured options.</remarks>
+        /// <param name="absolutePathPic1">The absolute file path to the first image. This cannot be null or empty.</param>
+        /// <param name="absolutePathPic2">The absolute file path to the second image. This cannot be null or empty.</param>
+        /// <returns>An <see cref="ICompareResult"/> object representing the differences between the two images.</returns>
         public ICompareResult CalcDiff(string absolutePathPic1, string absolutePathPic2)
         {
             return Compare.CalcDiff(absolutePathPic1, absolutePathPic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
