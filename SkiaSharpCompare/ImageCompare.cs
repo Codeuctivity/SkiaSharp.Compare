@@ -214,7 +214,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="absolutePathActual"></param>
         /// <param name="absolutePathExpected"></param>
         /// <returns></returns>
-        public bool ImagesHaveEqualSize(string absolutePathActual, string absolutePathExpected)
+        public static bool ImagesHaveEqualSize(string absolutePathActual, string absolutePathExpected)
         {
             return Compare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected);
         }

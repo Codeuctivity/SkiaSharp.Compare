@@ -30,11 +30,10 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(png0Rgba32, pngBlack2x2px, false)]
         public void ShouldVerifyThatImagesFromFilePathSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
         {
-            var sut = new ImageCompare();
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
-            Assert.That(sut.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+            Assert.That(ImageCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
 
         [Test]
@@ -45,14 +44,13 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(png0Rgba32, pngBlack2x2px, false)]
         public void ShouldVerifyThatImagesSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
         {
-            var sut = new ImageCompare();
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
             using var actual = SKBitmap.Decode(absolutePathActual);
             using var expected = SKBitmap.Decode(absolutePathExpected);
 
-            Assert.That(sut.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+            Assert.That(ImageCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
 
         [Test]
@@ -63,14 +61,13 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(png0Rgba32, pngBlack2x2px, false)]
         public void ShouldVerifyThatImageStreamsSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
         {
-            var sut = new ImageCompare();
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
             using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            Assert.That(sut.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+            Assert.That(ImageCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
 
         [Test]
