@@ -15,14 +15,14 @@ namespace SkiaSharpCompareTestNunit
             encodedData.SaveTo(diffMask1Stream);
         }
 
-        public static bool IsImageEntirelyBlack(SKBitmap image)
+        public static bool IsImageEntirelyBlack(SKBitmap image, Codeuctivity.SkiaSharpCompare.TransparencyOptions transparencyOptions)
         {
             for (var x = 0; x < image.Width; x++)
             {
                 for (var y = 0; y < image.Height; y++)
                 {
                     var sKColor = image.GetPixel(x, y);
-                    if (sKColor.Red != 0 || sKColor.Green != 0 || sKColor.Blue != 0 || sKColor.Alpha != 0)
+                    if (sKColor.Red != 0 || sKColor.Green != 0 || sKColor.Blue != 0 || (transparencyOptions == Codeuctivity.SkiaSharpCompare.TransparencyOptions.CompareAlphaChannel && sKColor.Alpha != 0))
                     {
                         return false;
                     }

@@ -223,7 +223,7 @@ namespace SkiaSharpCompareTestNunit
 
             using (var maskImage = sut.CalcDiffMaskImage(absolutePic1, absolutePic2))
             {
-                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage), Is.EqualTo(expectedOutcome));
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectedOutcome));
             }
         }
 
@@ -243,7 +243,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
 
             var maskImage1 = Compare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, ResizeOption.Resize);
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage1), Is.False);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage1, transparencyOptions), Is.False);
 
             using var absolutePic1 = SKBitmap.Decode(absolutePathPic1);
             using var absolutePic2 = SKBitmap.Decode(absolutePathPic2);
@@ -252,7 +252,7 @@ namespace SkiaSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
             using (var maskImage = sut.CalcDiffMaskImage(absolutePic1, absolutePic2))
             {
-                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage), Is.False);
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage, transparencyOptions), Is.False);
                 SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
@@ -402,7 +402,7 @@ namespace SkiaSharpCompareTestNunit
                 ImageExtensions.SaveAsPng(diffMask2Image, diffMask2Stream);
             }
 
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, transparencyOptions), Is.True);
 
             File.Delete(diffMask1Path);
         }
@@ -431,7 +431,7 @@ namespace SkiaSharpCompareTestNunit
             {
                 diffMask1Stream.Position = 0;
                 using var diffMask2Image = sut.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
-                Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel), Is.True);
             }
 
             File.Delete(diffMask1Path);
@@ -450,7 +450,7 @@ namespace SkiaSharpCompareTestNunit
             using var diffMask1Image = sut.CalcDiffMaskImage(image1, image2);
             using var diffMask2Image = sut.CalcDiffMaskImage(image1, image2, diffMask1Image);
 
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel), Is.True);
         }
 
         [Test]

@@ -527,7 +527,9 @@ namespace Codeuctivity.SkiaSharpCompare
                             if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
                             {
                                 var alpha = (byte)Math.Abs(actualPixel.Alpha - expectedPixel.Alpha);
-                                var pixel = new SKColor(red, green, blue, alpha);
+                                // Ensure mask pixel has full opacity if there's any color difference
+                                var effectiveAlpha = (red > 0 || green > 0 || blue > 0) ? (byte)255 : alpha;
+                                var pixel = new SKColor(red, green, blue, effectiveAlpha);
                                 maskImage.SetPixel(x, y, pixel);
                             }
                             else

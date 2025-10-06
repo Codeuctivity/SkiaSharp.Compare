@@ -241,7 +241,7 @@ namespace SkiaSharpCompareTestNunit
 
             using (var maskImage = Compare.CalcDiffMaskImage(absolutePic1, absolutePic2, resizeOption))
             {
-                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage));
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage, TransparencyOptions.IgnoreAlphaChannel));
             }
         }
 
@@ -358,7 +358,7 @@ namespace SkiaSharpCompareTestNunit
                 ImageExtensions.SaveAsPng(diffMask2Image, diffMask2Stream);
             }
 
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.EqualTo(expectIsImageEntirelyBlack));
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectIsImageEntirelyBlack));
 
             File.Delete(diffMask1Path);
         }
@@ -386,7 +386,7 @@ namespace SkiaSharpCompareTestNunit
             {
                 diffMask1Stream.Position = 0;
                 using var diffMask2Image = Compare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
-                Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel), Is.True);
             }
 
             File.Delete(diffMask1Path);
@@ -408,8 +408,8 @@ namespace SkiaSharpCompareTestNunit
 
             using var diffMask2Image = Compare.CalcDiffMaskImage(image1, image3, diffMask1Image, pixelColorShiftTolerance: expectedPixelColorShiftTolerance);
 
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image), Is.EqualTo(expectToleranceMaskToEntirelyBlack));
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image), Is.True);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectToleranceMaskToEntirelyBlack));
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel), Is.True);
         }
 
         [TestCase(png0Rgba32, png0Rgba32, 0)]
@@ -425,7 +425,7 @@ namespace SkiaSharpCompareTestNunit
 
             using var diffMask1Image = Compare.CalcDiffMaskImage(image1, image2, pixelColorShiftTolerance: expectedPixelColorShiftTolerance);
 
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image), Is.True);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image, TransparencyOptions.IgnoreAlphaChannel), Is.True);
         }
 
         [Test]
