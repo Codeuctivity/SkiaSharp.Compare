@@ -336,9 +336,9 @@ namespace SkiaSharpCompareTestNunit
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
-        [TestCase(png0Rgba32, png1Rgba32, 0, true)]
-        [TestCase(colorShift1, colorShift2, 20, false)]
-        [TestCase(colorShift1, colorShift2, 0, true)]
+        [TestCase(png0Rgba32, png1Rgba32, 0, false)]
+        [TestCase(colorShift1, colorShift2, 20, true)]
+        [TestCase(colorShift1, colorShift2, 0, false)]
         public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByFilePath_NoDifferences(string image1RelativePath, string image2RelativePath, int pixelColorShiftTolerance, bool expectIsImageEntirelyBlack)
         {
             var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
@@ -349,6 +349,7 @@ namespace SkiaSharpCompareTestNunit
             {
                 using var diffMask1Image = Compare.CalcDiffMaskImage(image1Path, image2Path, ResizeOption.DontResize, pixelColorShiftTolerance);
                 ImageExtensions.SaveAsPng(diffMask1Image, diffMask1Stream);
+                Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask1Image, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectIsImageEntirelyBlack));
             }
 
             using var diffMask2Image = Compare.CalcDiffMaskImage(image1Path, image2Path, diffMask1Path);
@@ -358,7 +359,7 @@ namespace SkiaSharpCompareTestNunit
                 ImageExtensions.SaveAsPng(diffMask2Image, diffMask2Stream);
             }
 
-            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectIsImageEntirelyBlack));
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(diffMask2Image, TransparencyOptions.IgnoreAlphaChannel));
 
             File.Delete(diffMask1Path);
         }
