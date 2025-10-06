@@ -242,7 +242,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
 
-            var maskImage1 = Compare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, ResizeOption.Resize);
+            var maskImage1 = sut.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2);
             Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage1, transparencyOptions), Is.False);
 
             using var absolutePic1 = SKBitmap.Decode(absolutePathPic1);
