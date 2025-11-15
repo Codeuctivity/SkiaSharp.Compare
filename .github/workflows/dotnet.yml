@@ -50,15 +50,14 @@ jobs:
     - name: NugetPush
       env: 
           NUGET_TOKEN_EXISTS: ${{ secrets.NUGET_TOKEN }}
-        if: env.NUGET_TOKEN_EXISTS != ''
-        run: |
-          dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
-      - name: Github release
-        shell: bash
-        env:
+      if: env.NUGET_TOKEN_EXISTS != ''
+      run: |
+        dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
+    - name: Github release
+      env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
-        if: env.GITHUB_TOKEN != ''
-        run: |
+      if: env.GITHUB_TOKEN != ''
+      run: |
           gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg --generate-notes
 
   deployTest:
@@ -81,14 +80,14 @@ jobs:
     - name: NugetPush
       env:
           NUGET_TOKEN_EXISTS: ${{ secrets.NUGET_TEST_TOKEN }}
-        if: env.NUGET_TOKEN_EXISTS != ''
-        run: |
+      if: env.NUGET_TOKEN_EXISTS != ''
+      run: |
           ls ./SkiaSharpCompare/bin/Release
           dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TEST_TOKEN}} --source https://apiint.nugettest.org/v3/index.json
-      - name: Github prerelease
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
-        if: env.GITHUB_TOKEN != ''
-        run: |
-          gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg --prerelease --generate-notes
+    - name: Github prerelease
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.TOKEN }}
+      if: env.GITHUB_TOKEN != ''
+      run: |
+        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg --prerelease --generate-notes
