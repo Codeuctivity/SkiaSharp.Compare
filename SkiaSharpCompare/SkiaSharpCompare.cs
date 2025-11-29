@@ -1,5 +1,6 @@
 ﻿using SkiaSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Codeuctivity.SkiaSharpCompare
@@ -56,9 +57,20 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
+        /// <param name="compareMetadata"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
+            if (compareMetadata)
+            {
+                var hasMetadataDiff = MetadataComparer.CompareMetadata(pathImageActual, pathImageExpected)?.Count != 0;
+
+                if (hasMetadataDiff)
+                {
+                    return false;
+                }
+            }
+
             using var actualImage = SKBitmap.Decode(pathImageActual);
             using var expectedImage = SKBitmap.Decode(pathImageExpected);
             return ImagesAreEqual(actualImage, expectedImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
@@ -72,9 +84,20 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
+        /// <param name="compareMetadata"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Stream actual, Stream expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static bool ImagesAreEqual(Stream actual, Stream expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
+            if (compareMetadata)
+            {
+                var hasMetadataDiff = MetadataComparer.CompareMetadata(actual, expected)?.Count != 0;
+
+                if (hasMetadataDiff)
+                {
+                    return false;
+                }
+            }
+
             using var actualImage = SKBitmap.Decode(actual);
             using var expectedImage = SKBitmap.Decode(expected);
             return ImagesAreEqual(actualImage, expectedImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
@@ -88,9 +111,15 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="transparencyOptions"></param>
         /// <param name="pixelColorShiftTolerance"></param>
+        /// <param name="compareMetadata"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
+            if (compareMetadata)
+            {
+                throw new NotSupportedException("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison.");
+            }
+
             ArgumentNullException.ThrowIfNull(actual);
             ArgumentNullException.ThrowIfNull(expected);
 
@@ -161,7 +190,7 @@ namespace Codeuctivity.SkiaSharpCompare
         {
             using var actual = SKBitmap.Decode(pathActualImage);
             using var expected = SKBitmap.Decode(pathExpectedImage);
-            return CalcDiff(actual, expected, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+            return CalcDiffInternal(actual, expected, null, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
@@ -177,7 +206,7 @@ namespace Codeuctivity.SkiaSharpCompare
         {
             using var actual = SKBitmap.Decode(actualImage);
             using var expected = SKBitmap.Decode(expectedImage);
-            return CalcDiff(actual, expected, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+            return CalcDiffInternal(actual, expected, null, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
@@ -185,11 +214,12 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="metadataDifference"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
+        internal static ICompareResult CalcDiffInternal(SKBitmap actual, SKBitmap expected, Dictionary<string, (string? ValueA, string? ValueB)>? metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
         {
             var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
 
@@ -198,7 +228,7 @@ namespace Codeuctivity.SkiaSharpCompare
                 var grown = GrowToSameDimension(actual, expected);
                 try
                 {
-                    return CalcDiff(grown.Item1, grown.Item2, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
+                    return CalcDiffInternal(grown.Item1, grown.Item2, metadataDifference, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
                 }
                 finally
                 {
@@ -239,7 +269,7 @@ namespace Codeuctivity.SkiaSharpCompare
 
             var meanError = (double)absoluteError / quantity;
             var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
-            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
+            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage, metadataDifference);
         }
 
         /// <summary>
@@ -288,6 +318,12 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="transparencyOptions"></param>
         /// <returns></returns>
         public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        {
+            var metadataDifference = new Dictionary<string, (string? ValueA, string? ValueB)>();
+            return CalcDiff(actual, expected, maskImage, metadataDifference, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+        }
+
+        internal static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, Dictionary<string, (string? ValueA, string? ValueB)> metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
             ArgumentNullException.ThrowIfNull(maskImage);
 
@@ -361,7 +397,7 @@ namespace Codeuctivity.SkiaSharpCompare
             }
             var meanError = (double)absoluteError / quantity;
             var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
-            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
+            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage, metadataDifference);
         }
 
         private static bool ImagesHaveSameDimension(SKBitmap actual, SKBitmap expected)
