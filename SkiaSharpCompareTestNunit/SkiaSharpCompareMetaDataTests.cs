@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace SkiaSharpCompareTestNunit
 {
@@ -56,6 +57,11 @@ namespace SkiaSharpCompareTestNunit
             var sut = new ImageCompare(compareMetadata: true);
             var actual = sut.CalcDiff(absoluteA, absoluteB);
 
+            // Output actual and expected to test run logs for easier diagnosis
+            TestContext.WriteLine($"Actual image: {absoluteA}");
+            TestContext.WriteLine($"Expected image: {absoluteB}");
+            TestContext.WriteLine($"Actual MetadataDifferences: {FormatMetadata(actual.MetadataDifferences)}");
+
             var expected = new Dictionary<string, (string? ValueA, string? ValueB)>
             {
                 { "File:File Name", (Path.GetFileName(absoluteA), Path.GetFileName(absoluteB)) },
@@ -69,8 +75,20 @@ namespace SkiaSharpCompareTestNunit
                 { "GPS:GPS Time-Stamp", ("00:00:00,000 UTC", "14:41:20,000 UTC") }
             };
 
+            TestContext.WriteLine($"Expected MetadataDifferences: {FormatMetadata(expected)}");
+
             Assert.That(actual.MetadataDifferences, Is.EqualTo(expected));
             Assert.That(actual.PixelErrorCount, Is.Zero);
+        }
+
+        private static string FormatMetadata(Dictionary<string, (string? ValueA, string? ValueB)>? metadata)
+        {
+            if (metadata is null)
+            {
+                return "null";
+            }
+
+            return string.Join("; ", metadata.Select(kvp => $"{kvp.Key}=[{kvp.Value.ValueA ?? ""} | {kvp.Value.ValueB ?? ""}]"));
         }
     }
 }
