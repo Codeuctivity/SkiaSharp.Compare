@@ -49,6 +49,7 @@ namespace SkiaSharpCompareTestNunit
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnCollectionOfMetadataThatDiffers()
         {
             var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataA);
@@ -65,14 +66,14 @@ namespace SkiaSharpCompareTestNunit
             var expected = new Dictionary<string, (string? ValueA, string? ValueB)>
             {
                 { "File:File Name", (Path.GetFileName(absoluteA), Path.GetFileName(absoluteB)) },
-                { "GPS:GPS Altitude", ("0 metres", "201,62 metres") },
+                { "GPS:GPS Altitude", ("0 metres", "201.62 metres") },
                 { "GPS:GPS Date Stamp", ("", "2025:01:03") },
-                { "GPS:GPS Latitude", ("0° 0' 0\"", "48° 12' 7,17\"") },
+                { "GPS:GPS Latitude", ("0° 0' 0\"", "48° 12' 7.17\"") },
                 { "GPS:GPS Latitude Ref", ("", "N") },
-                { "GPS:GPS Longitude", ("0° 0' 0\"", "16° 24' 7,53\"") },
+                { "GPS:GPS Longitude", ("0° 0' 0\"", "16° 24' 7.53\"") },
                 { "GPS:GPS Longitude Ref", ("", "E") },
                 { "GPS:GPS Processing Method", ("", "GPS") },
-                { "GPS:GPS Time-Stamp", ("00:00:00,000 UTC", "14:41:20,000 UTC") }
+                { "GPS:GPS Time-Stamp", ("00:00:00.000 UTC", "14:41:20.000 UTC") }
             };
 
             TestContext.WriteLine($"Expected MetadataDifferences: {FormatMetadata(expected)}");
