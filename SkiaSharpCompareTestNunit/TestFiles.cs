@@ -15,6 +15,8 @@
         public const string renderedForm2 = "../../../TestData/HC007-Test-02-3-OxPt.html2.png";
         public const string colorShift1 = "../../../TestData/colorShift1.png";
         public const string colorShift2 = "../../../TestData/colorShift2.png";
+
+        // These changes are related to https://github.com/nextcloud/android/issues/6248#issuecomment-1207315271
         public const string imageWithMetadataA = "../../../TestData/imageWithMetadataA.jpg";
         public const string imageWithMetadataB = "../../../TestData/imageWithMetadataB.jpg";
     }
