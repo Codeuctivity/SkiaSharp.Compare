@@ -23,6 +23,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// cref="TransparencyOptions.CompareAlphaChannel"/>.</param>
         /// <param name="pixelColorShiftTolerance">Specifies the tolerance for color shifts in pixel values during comparison.  A value of 0 means no
         /// tolerance, and higher values allow for greater differences. The default is 0.</param>
+        /// <param name="compareMetadata"></param>
         public ImageCompare(ResizeOption resizeOption = ResizeOption.DontResize, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, int pixelColorShiftTolerance = 0, bool compareMetadata = false)
         {
             ResizeOption = resizeOption;

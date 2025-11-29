@@ -319,6 +319,10 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns></returns>
         public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
+            ArgumentNullException.ThrowIfNull(actual);
+            ArgumentNullException.ThrowIfNull(expected);
+            ArgumentNullException.ThrowIfNull(maskImage);
+
             var metadataDifference = new Dictionary<string, (string? ValueA, string? ValueB)>();
             return CalcDiff(actual, expected, maskImage, metadataDifference, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
