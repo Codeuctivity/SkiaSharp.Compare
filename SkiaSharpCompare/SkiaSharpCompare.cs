@@ -210,69 +210,6 @@ namespace Codeuctivity.SkiaSharpCompare
         }
 
         /// <summary>
-        /// Calculates ICompareResult expressing the amount of difference of both images
-        /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
-        /// <param name="metadataDifference"></param>
-        /// <param name="resizeOption"></param>
-        /// <param name="pixelColorShiftTolerance"></param>
-        /// <param name="transparencyOptions"></param>
-        /// <returns>Mean and absolute pixel error</returns>
-        internal static ICompareResult CalcDiffInternal(SKBitmap actual, SKBitmap expected, Dictionary<string, (string? ValueA, string? ValueB)>? metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
-        {
-            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
-
-            if (resizeOption == ResizeOption.Resize && !imagesHaveSameDimension)
-            {
-                var grown = GrowToSameDimension(actual, expected);
-                try
-                {
-                    return CalcDiffInternal(grown.Item1, grown.Item2, metadataDifference, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
-                }
-                finally
-                {
-                    grown.Item1?.Dispose();
-                    grown.Item2?.Dispose();
-                }
-            }
-
-            if (!ImagesHaveSameDimension(actual, expected))
-            {
-                throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
-            }
-
-            var quantity = actual.Width * actual.Height;
-            var absoluteError = 0;
-            var pixelErrorCount = 0;
-
-            for (var x = 0; x < actual.Width; x++)
-            {
-                for (var y = 0; y < actual.Height; y++)
-                {
-                    var actualPixel = actual.GetPixel(x, y);
-                    var expectedPixel = expected.GetPixel(x, y);
-
-                    var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
-                    var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
-                    var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
-                    var sum = r + g + b;
-                    if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
-                    {
-                        var a = Math.Abs(expectedPixel.Alpha - actualPixel.Alpha);
-                        sum = sum + a;
-                    }
-                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum : 0);
-                    pixelErrorCount += (sum > pixelColorShiftTolerance) ? 1 : 0;
-                }
-            }
-
-            var meanError = (double)absoluteError / quantity;
-            var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
-            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage, metadataDifference);
-        }
-
-        /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images using a mask image for tolerated difference between the two images
         /// </summary>
         /// <param name="pathActualImage"></param>
@@ -399,6 +336,69 @@ namespace Codeuctivity.SkiaSharpCompare
                     pixelErrorCount += error > pixelColorShiftTolerance ? 1 : 0;
                 }
             }
+            var meanError = (double)absoluteError / quantity;
+            var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
+            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage, metadataDifference);
+        }
+
+        /// <summary>
+        /// Calculates ICompareResult expressing the amount of difference of both images
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <param name="metadataDifference"></param>
+        /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
+        /// <param name="transparencyOptions"></param>
+        /// <returns>Mean and absolute pixel error</returns>
+        internal static ICompareResult CalcDiffInternal(SKBitmap actual, SKBitmap expected, Dictionary<string, (string? ValueA, string? ValueB)>? metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
+        {
+            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
+
+            if (resizeOption == ResizeOption.Resize && !imagesHaveSameDimension)
+            {
+                var grown = GrowToSameDimension(actual, expected);
+                try
+                {
+                    return CalcDiffInternal(grown.Item1, grown.Item2, metadataDifference, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
+                }
+                finally
+                {
+                    grown.Item1?.Dispose();
+                    grown.Item2?.Dispose();
+                }
+            }
+
+            if (!ImagesHaveSameDimension(actual, expected))
+            {
+                throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
+            }
+
+            var quantity = actual.Width * actual.Height;
+            var absoluteError = 0;
+            var pixelErrorCount = 0;
+
+            for (var x = 0; x < actual.Width; x++)
+            {
+                for (var y = 0; y < actual.Height; y++)
+                {
+                    var actualPixel = actual.GetPixel(x, y);
+                    var expectedPixel = expected.GetPixel(x, y);
+
+                    var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
+                    var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
+                    var b = Math.Abs(expectedPixel.Blue - actualPixel.Blue);
+                    var sum = r + g + b;
+                    if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
+                    {
+                        var a = Math.Abs(expectedPixel.Alpha - actualPixel.Alpha);
+                        sum = sum + a;
+                    }
+                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum : 0);
+                    pixelErrorCount += (sum > pixelColorShiftTolerance) ? 1 : 0;
+                }
+            }
+
             var meanError = (double)absoluteError / quantity;
             var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
             return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage, metadataDifference);

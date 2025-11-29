@@ -86,8 +86,8 @@ namespace Codeuctivity.SkiaSharpCompare.Cli
                 throw new DirectoryNotFoundException(dirB);
             }
 
-            var filesA = Directory.GetFiles(dirA).Select(Path.GetFileName).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            var filesB = Directory.GetFiles(dirB).Select(Path.GetFileName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var filesA = Directory.GetFiles(dirA).Select(Path.GetFileName).Where(n => n != null).Cast<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var filesB = Directory.GetFiles(dirB).Select(Path.GetFileName).Where(n => n != null).Cast<string>().ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             var onlyInA = filesA.Except(filesB, StringComparer.OrdinalIgnoreCase).OrderBy(n => n).ToList();
             var onlyInB = filesB.Except(filesA, StringComparer.OrdinalIgnoreCase).OrderBy(n => n).ToList();
