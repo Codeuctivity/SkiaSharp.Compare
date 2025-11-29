@@ -48,7 +48,7 @@ jobs:
     - name: Upload CLI artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: cli-artifacts
+        name: cli-artifacts-${{ matrix.os }}
         path: ./artifacts/cli
 
     - name: Test
@@ -74,8 +74,7 @@ jobs:
     - name: Download CLI artifacts
       uses: actions/download-artifact@v4
       with:
-        name: cli-artifacts
-        path: ./artifacts_download
+         path: ./artifacts_download
     - name: NugetPush
       env: 
           NUGET_TOKEN_EXISTS: ${{ secrets.NUGET_TOKEN }}
@@ -87,7 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
-          gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/cli/** --generate-notes
+          # Attach all downloaded CLI artifacts regardless of OS
+          gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/** --generate-notes
 
   deployTest:
     if: ${{ !startsWith(github.ref, 'refs/heads/release') }}
@@ -109,8 +109,7 @@ jobs:
     - name: Download CLI artifacts
       uses: actions/download-artifact@v4
       with:
-        name: cli-artifacts
-        path: ./artifacts_download
+         path: ./artifacts_download
     - name: NugetPush
       env:
           NUGET_TOKEN_EXISTS: ${{ secrets.NUGET_TEST_TOKEN }}
@@ -124,4 +123,4 @@ jobs:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
-        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/cli/** --prerelease --generate-notes
+        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/** --prerelease --generate-notes
