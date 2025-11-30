@@ -57,7 +57,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
-        /// <param name="compareMetadata"></param>
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
@@ -84,7 +84,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
-        /// <param name="compareMetadata"></param>
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(Stream actual, Stream expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
@@ -111,7 +111,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="transparencyOptions"></param>
         /// <param name="pixelColorShiftTolerance"></param>
-        /// <param name="compareMetadata"></param>
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
