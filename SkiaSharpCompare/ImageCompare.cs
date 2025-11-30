@@ -117,18 +117,18 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Calculates the difference between two in-memory images represented as <see cref="SKBitmap"/> objects.
         /// </summary>
-        /// <param name="Pic1"></param>
-        /// <param name="Pic2"></param>
+        /// <param name="pic1"></param>
+        /// <param name="pic2"></param>
         /// <param name="differenceMaskPic"></param>
         /// <returns></returns>
-        public ICompareResult CalcDiff(SKBitmap Pic1, SKBitmap Pic2, SKBitmap differenceMaskPic)
+        public ICompareResult CalcDiff(SKBitmap pic1, SKBitmap pic2, SKBitmap differenceMaskPic)
         {
             if (CompareMetadata)
             {
                 throw new NotSupportedException("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison.");
             }
 
-            return Compare.CalcDiff(Pic1, Pic2, differenceMaskPic, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiff(pic1, pic2, differenceMaskPic, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
@@ -173,23 +173,23 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two images located at the specified file paths.
         /// </summary>
-        /// <param name="PathPic1"></param>
-        /// <param name="PathPic2"></param>
+        /// <param name="pathPic1"></param>
+        /// <param name="pathPic2"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(string PathPic1, string PathPic2)
+        public SKBitmap CalcDiffMaskImage(string pathPic1, string pathPic2)
         {
-            return Compare.CalcDiffMaskImage(PathPic1, PathPic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(pathPic1, pathPic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two in-memory images represented as <see cref="SKBitmap"/> objects.
         /// </summary>
-        /// <param name="Pic1"></param>
-        /// <param name="Pic2"></param>
+        /// <param name="pic1"></param>
+        /// <param name="pic2"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(SKBitmap Pic1, SKBitmap Pic2)
+        public SKBitmap CalcDiffMaskImage(SKBitmap pic1, SKBitmap pic2)
         {
-            return Compare.CalcDiffMaskImage(Pic1, Pic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(pic1, pic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
