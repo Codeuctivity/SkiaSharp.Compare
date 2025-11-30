@@ -11,8 +11,8 @@ namespace SkiaSharpCompareTestNunit
     {
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, true, true)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, false, true)]
-        [TestCase(TestFiles.imageWithMetadataA, TestFiles.imageWithMetadataB, true, false)]
-        [TestCase(TestFiles.imageWithMetadataA, TestFiles.imageWithMetadataB, false, true)]
+        [TestCase(TestFiles.imageWithoutGpsMetadata, TestFiles.imageWithGpsMetadata, true, false)]
+        [TestCase(TestFiles.imageWithoutGpsMetadata, TestFiles.imageWithGpsMetadata, false, true)]
         public void ImagesAreEqual_SamePixelComparedByMetadataShouldReturnResult(string imageAPath, string imageBPath, bool shouldCompareMetadata, bool expectOutcomeComparisonOfImage)
         {
             var absoluteA = Path.Combine(AppContext.BaseDirectory, imageAPath);
@@ -25,8 +25,8 @@ namespace SkiaSharpCompareTestNunit
         [Test]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnResult_Null()
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataA);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataA);
+            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
+            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
 
             var sut = new ImageCompare(compareMetadata: false);
             var actual = sut.CalcDiff(absoluteA, absoluteB);
@@ -38,8 +38,8 @@ namespace SkiaSharpCompareTestNunit
         [Test]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnEmptyResult()
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataA);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataA);
+            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
+            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
 
             var sut = new ImageCompare(compareMetadata: true);
             var actual = sut.CalcDiff(absoluteA, absoluteB);
@@ -52,8 +52,8 @@ namespace SkiaSharpCompareTestNunit
         [SetCulture("en-US")]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnCollectionOfMetadataThatDiffers()
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataA);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithMetadataB);
+            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
+            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithGpsMetadata);
 
             var sut = new ImageCompare(compareMetadata: true);
             var actual = sut.CalcDiff(absoluteA, absoluteB);
