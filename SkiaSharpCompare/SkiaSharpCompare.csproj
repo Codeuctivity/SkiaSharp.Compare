@@ -38,16 +38,16 @@
 	<AssemblyName>Codeuctivity.SkiaSharpCompare</AssemblyName>
 	<RootNamespace>Codeuctivity.SkiaSharpCompare</RootNamespace>
 	<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-
   </PropertyGroup>
   <ItemGroup>
 	<None Include="docs\nugetReadme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="MetadataExtractor" Version="2.9.0" />
 	<PackageReference Include="SkiaSharp" Version="3.119.1" />
 	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.1" />
-	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.16.0.128591">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>

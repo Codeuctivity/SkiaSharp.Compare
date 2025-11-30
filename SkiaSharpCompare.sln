@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1B6F6C3-ECBE-471C-AE18-199DEF5982C3}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharpCompare", "SkiaSha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharpCompareTestNunit", "SkiaSharpCompareTestNunit\SkiaSharpCompareTestNunit.csproj", "{9CFA9A6F-92FC-40E3-BB85-4C8F95EFC8C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharpCompare.Cli", "SkiaSharpCompare.Cli\SkiaSharpCompare.Cli.csproj", "{296B4D6C-C8F6-81DE-9B65-D4CE48783B52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkiaSharpCompare.Cli.Tests", "SkiaSharpCompare.Cli.Tests\SkiaSharpCompare.Cli.Tests.csproj", "{059AD3EF-A494-850F-6457-E5C4D706CC94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,14 @@ Global
 		{9CFA9A6F-92FC-40E3-BB85-4C8F95EFC8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CFA9A6F-92FC-40E3-BB85-4C8F95EFC8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CFA9A6F-92FC-40E3-BB85-4C8F95EFC8C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{296B4D6C-C8F6-81DE-9B65-D4CE48783B52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{296B4D6C-C8F6-81DE-9B65-D4CE48783B52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{296B4D6C-C8F6-81DE-9B65-D4CE48783B52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{296B4D6C-C8F6-81DE-9B65-D4CE48783B52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{059AD3EF-A494-850F-6457-E5C4D706CC94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{059AD3EF-A494-850F-6457-E5C4D706CC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{059AD3EF-A494-850F-6457-E5C4D706CC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{059AD3EF-A494-850F-6457-E5C4D706CC94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
