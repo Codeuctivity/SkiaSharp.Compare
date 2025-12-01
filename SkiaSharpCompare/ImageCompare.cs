@@ -143,7 +143,28 @@ namespace Codeuctivity.SkiaSharpCompare
 
             if (CompareMetadata)
             {
+                if (pic1.CanSeek)
+                {
+                    pic1.Position = 0;
+                }
+
+                if (pic2.CanSeek)
+                {
+                    pic2.Position = 0;
+                }
+
                 var metadataDiff = MetadataComparer.CompareMetadata(pic1, pic2);
+
+                if (pic1.CanSeek)
+                {
+                    pic1.Position = 0;
+                }
+
+                if (pic2.CanSeek)
+                {
+                    pic2.Position = 0;
+                }
+
                 return new CompareResultWithMetadata(compareResult, metadataDiff);
             }
 
@@ -258,7 +279,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns></returns>
         public bool ImagesAreEqual(Stream actual, Stream expected)
         {
-            return Compare.ImagesAreEqual(actual, expected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.ImagesAreEqual(actual, expected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions, CompareMetadata);
         }
 
         /// <summary>
@@ -269,7 +290,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns></returns>
         public bool ImagesAreEqual(SKBitmap actual, SKBitmap expected)
         {
-            return Compare.ImagesAreEqual(actual, expected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.ImagesAreEqual(actual, expected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions, CompareMetadata);
         }
 
         /// <summary>

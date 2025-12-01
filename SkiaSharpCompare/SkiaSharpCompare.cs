@@ -33,8 +33,10 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns></returns>
         public static bool ImagesHaveEqualSize(Stream actual, Stream expected)
         {
-            using var actualImage = SKBitmap.Decode(actual);
-            using var expectedImage = SKBitmap.Decode(expected);
+            ArgumentNullException.ThrowIfNull(actual);
+            ArgumentNullException.ThrowIfNull(expected);
+            using var actualImage = DecodeStream(actual);
+            using var expectedImage = DecodeStream(expected);
             return ImagesHaveEqualSize(actualImage, expectedImage);
         }
 
@@ -98,8 +100,11 @@ namespace Codeuctivity.SkiaSharpCompare
                 }
             }
 
-            using var actualImage = SKBitmap.Decode(actual);
-            using var expectedImage = SKBitmap.Decode(expected);
+            ArgumentNullException.ThrowIfNull(actual);
+            ArgumentNullException.ThrowIfNull(expected);
+
+            using var actualImage = DecodeStream(actual);
+            using var expectedImage = DecodeStream(expected);
             return ImagesAreEqual(actualImage, expectedImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
@@ -204,8 +209,11 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
         {
-            using var actual = SKBitmap.Decode(actualImage);
-            using var expected = SKBitmap.Decode(expectedImage);
+            ArgumentNullException.ThrowIfNull(actualImage);
+            ArgumentNullException.ThrowIfNull(expectedImage);
+
+            using var actual = DecodeStream(actualImage);
+            using var expected = DecodeStream(expectedImage);
             return CalcDiffInternal(actual, expected, null, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
@@ -239,9 +247,37 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns></returns>
         public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            using var actual = SKBitmap.Decode(actualImage);
-            using var expected = SKBitmap.Decode(expectedImage);
+            ArgumentNullException.ThrowIfNull(actualImage);
+            ArgumentNullException.ThrowIfNull(expectedImage);
+            ArgumentNullException.ThrowIfNull(maskImage);
+
+            using var actual = DecodeStream(actualImage);
+            using var expected = DecodeStream(expectedImage);
             return CalcDiff(actual, expected, maskImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+        }
+
+        private static SKBitmap DecodeStream(Stream stream)
+        {
+            // Addressing https://github.com/mono/SkiaSharp/issues/2263
+
+            using var copy = new MemoryStream();
+
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+
+            stream.CopyTo(copy);
+
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+
+            var bytes = copy.ToArray();
+            using var skData = SKData.CreateCopy(bytes);
+
+            return SKBitmap.Decode(skData);
         }
 
         /// <summary>
@@ -458,26 +494,11 @@ namespace Codeuctivity.SkiaSharpCompare
         public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
             ArgumentNullException.ThrowIfNull(actualImage);
-
             ArgumentNullException.ThrowIfNull(expectedImage);
 
-            if (actualImage.CanSeek)
-            {
-                actualImage.Position = 0;
-            }
-            if (expectedImage.CanSeek)
-            {
-                expectedImage.Position = 0;
-            }
+            using var actual = DecodeStream(actualImage);
+            using var expected = DecodeStream(expectedImage);
 
-            using var actualImageCopy = new MemoryStream();
-            using var expectedImageCopy = new MemoryStream();
-            actualImage.CopyTo(actualImageCopy);
-            expectedImage.CopyTo(expectedImageCopy);
-            actualImageCopy.Position = 0;
-            expectedImageCopy.Position = 0;
-            using var actual = SKBitmap.Decode(actualImageCopy);
-            using var expected = SKBitmap.Decode(expectedImageCopy);
             return CalcDiffMaskImage(actual, expected, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
@@ -494,37 +515,13 @@ namespace Codeuctivity.SkiaSharpCompare
         public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
             ArgumentNullException.ThrowIfNull(actualImage);
-
             ArgumentNullException.ThrowIfNull(expectedImage);
-
             ArgumentNullException.ThrowIfNull(maskImage);
 
-            if (actualImage.CanSeek)
-            {
-                actualImage.Position = 0;
-            }
-            if (expectedImage.CanSeek)
-            {
-                expectedImage.Position = 0;
-            }
+            using var actual = DecodeStream(actualImage);
+            using var expected = DecodeStream(expectedImage);
+            using var mask = DecodeStream(maskImage);
 
-            if (maskImage.CanSeek)
-            {
-                maskImage.Position = 0;
-            }
-
-            using var actualImageCopy = new MemoryStream();
-            using var expectedImageCopy = new MemoryStream();
-            using var maskCopy = new MemoryStream();
-            actualImage.CopyTo(actualImageCopy);
-            expectedImage.CopyTo(expectedImageCopy);
-            maskImage.CopyTo(maskCopy);
-            actualImageCopy.Position = 0;
-            expectedImageCopy.Position = 0;
-            maskCopy.Position = 0;
-            using var actual = SKBitmap.Decode(actualImageCopy);
-            using var expected = SKBitmap.Decode(expectedImageCopy);
-            using var mask = SKBitmap.Decode(maskCopy);
             return CalcDiffMaskImage(actual, expected, mask, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 

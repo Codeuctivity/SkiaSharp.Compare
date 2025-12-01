@@ -1,35 +1,34 @@
 ﻿using Codeuctivity.SkiaSharpCompare;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace SkiaSharpCompareTestNunit
 {
-    internal class SkiaSharpCompareMetaDataTests
+    internal class SkiaSharpCompareMetaData_StreamTests
     {
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, true, true)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, false, true)]
         [TestCase(TestFiles.imageWithoutGpsMetadata, TestFiles.imageWithGpsMetadata, true, false)]
         [TestCase(TestFiles.imageWithoutGpsMetadata, TestFiles.imageWithGpsMetadata, false, true)]
-        public void ImagesAreEqual_SamePixelComparedByMetadataShouldReturnResult(string imageAPath, string imageBPath, bool shouldCompareMetadata, bool expectOutcomeComparisonOfImage)
+        public void ImagesAreEqual_SamePixelComparedByMetadataShouldReturnResult(string pic1Path, string pic2Path, bool shouldCompareMetadata, bool expectOutcomeComparisonOfImage)
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, imageAPath);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, imageBPath);
+            using var pic1 = File.OpenRead(pic1Path);
+            using var pic2 = File.OpenRead(pic2Path);
 
             var sut = new ImageCompare(compareMetadata: shouldCompareMetadata);
-            Assert.That(sut.ImagesAreEqual(absoluteA, absoluteB), Is.EqualTo(expectOutcomeComparisonOfImage));
+            Assert.That(sut.ImagesAreEqual(pic1, pic2), Is.EqualTo(expectOutcomeComparisonOfImage));
         }
 
         [Test]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnResult_Null()
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
+            using var pic1 = File.OpenRead(TestFiles.imageWithoutGpsMetadata);
+            using var pic2 = File.OpenRead(TestFiles.imageWithoutGpsMetadata);
 
             var sut = new ImageCompare(compareMetadata: false);
-            var actual = sut.CalcDiff(absoluteA, absoluteB);
+            var actual = sut.CalcDiff(pic1, pic2);
 
             Assert.That(actual.MetadataDifferences, Is.Null);
             Assert.That(actual.PixelErrorCount, Is.Zero);
@@ -38,11 +37,11 @@ namespace SkiaSharpCompareTestNunit
         [Test]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnEmptyResult()
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
+            using var pic1 = File.OpenRead(TestFiles.imageWithoutGpsMetadata);
+            using var pic2 = File.OpenRead(TestFiles.imageWithoutGpsMetadata);
 
             var sut = new ImageCompare(compareMetadata: true);
-            var actual = sut.CalcDiff(absoluteA, absoluteB);
+            var actual = sut.CalcDiff(pic1, pic2);
 
             Assert.That(actual.MetadataDifferences, Is.Empty);
             Assert.That(actual.PixelErrorCount, Is.Zero);
@@ -52,20 +51,18 @@ namespace SkiaSharpCompareTestNunit
         [SetCulture("en-US")]
         public void CalcDiff_SamePixelComparedByMetadataShouldReturnCollectionOfMetadataThatDiffers()
         {
-            var absoluteA = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata);
-            var absoluteB = Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithGpsMetadata);
-
+            using var pic1 = File.OpenRead(TestFiles.imageWithoutGpsMetadata);
+            using var pic2 = File.OpenRead(TestFiles.imageWithGpsMetadata);
             var sut = new ImageCompare(compareMetadata: true);
-            var actual = sut.CalcDiff(absoluteA, absoluteB);
+            var actual = sut.CalcDiff(pic1, pic2);
 
             // Output actual and expected to test run logs for easier diagnosis
-            TestContext.WriteLine($"Actual image: {absoluteA}");
-            TestContext.WriteLine($"Expected image: {absoluteB}");
+            TestContext.WriteLine($"Actual image: {pic1}");
+            TestContext.WriteLine($"Expected image: {pic2}");
             TestContext.WriteLine($"Actual MetadataDifferences: {FormatMetadata(actual.MetadataDifferences)}");
 
             var expected = new Dictionary<string, (string? ValueA, string? ValueB)>
             {
-                { "File:File Name", (Path.GetFileName(absoluteA), Path.GetFileName(absoluteB)) },
                 { "GPS:GPS Altitude", ("0 metres", "201.62 metres") },
                 { "GPS:GPS Date Stamp", ("", "2025:01:03") },
                 { "GPS:GPS Latitude", ("0° 0' 0\"", "48° 12' 7.17\"") },
