@@ -82,12 +82,13 @@ jobs:
       run: |
         dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
     - name: Github release
+      shell: bash
       env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
           # Attach all downloaded CLI artifacts regardless of OS
-          # After (fixed)
+          shopt -s globstar
           gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/**/* --generate-notes
 
   deployTest:
@@ -124,4 +125,5 @@ jobs:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
+        shopt -s globstar
         gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/**/* --prerelease --generate-notes
