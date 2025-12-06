@@ -1,8 +1,7 @@
+using Codeuctivity.SkiaSharpCompare.Cli;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Linq;
-using Codeuctivity.SkiaSharpCompare.Cli;
 
 namespace SkiaSharpCompare.Cli.Tests
 {

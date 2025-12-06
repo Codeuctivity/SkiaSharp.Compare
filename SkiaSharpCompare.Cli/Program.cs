@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using Codeuctivity.SkiaSharpCompare;
 using SkiaSharpCompare.Metadata;
 
 namespace Codeuctivity.SkiaSharpCompare.Cli
