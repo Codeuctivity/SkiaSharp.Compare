@@ -15,57 +15,57 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Is true if width and height of both images are equal
         /// </summary>
-        /// <param name="pathImageActual"></param>
-        /// <param name="pathImageExpected"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <returns></returns>
-        public static bool ImagesHaveEqualSize(string pathImageActual, string pathImageExpected)
+        public static bool ImagesHaveEqualSize(string pathImage1, string pathImage2)
         {
-            using var actualImage = SKBitmap.Decode(pathImageActual);
-            using var expectedImage = SKBitmap.Decode(pathImageExpected);
+            using var image1 = SKBitmap.Decode(pathImage1);
+            using var image2 = SKBitmap.Decode(pathImage2);
+            return ImagesHaveEqualSize(image1, image2);
+        }
+
+        /// <summary>
+        /// Is true if width and height of both images are equal
+        /// </summary>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <returns></returns>
+        public static bool ImagesHaveEqualSize(Stream image1, Stream image2)
+        {
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
+            using var actualImage = DecodeStream(image1);
+            using var expectedImage = DecodeStream(image2);
             return ImagesHaveEqualSize(actualImage, expectedImage);
         }
 
         /// <summary>
         /// Is true if width and height of both images are equal
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <returns></returns>
-        public static bool ImagesHaveEqualSize(Stream actual, Stream expected)
+        public static bool ImagesHaveEqualSize(SKBitmap image1, SKBitmap image2)
         {
-            ArgumentNullException.ThrowIfNull(actual);
-            ArgumentNullException.ThrowIfNull(expected);
-            using var actualImage = DecodeStream(actual);
-            using var expectedImage = DecodeStream(expected);
-            return ImagesHaveEqualSize(actualImage, expectedImage);
-        }
-
-        /// <summary>
-        /// Is true if width and height of both images are equal
-        /// </summary>
-        /// <param name="actualImage"></param>
-        /// <param name="expectedImage"></param>
-        /// <returns></returns>
-        public static bool ImagesHaveEqualSize(SKBitmap actualImage, SKBitmap expectedImage)
-        {
-            return ImagesHaveSameDimension(actualImage, expectedImage);
+            return ImagesHaveSameDimension(image1, image2);
         }
 
         /// <summary>
         /// Compares two images for equivalence
         /// </summary>
-        /// <param name="pathImageActual"></param>
-        /// <param name="pathImageExpected"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
-        /// <param name="compareMetadata"></param>
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
+        public static bool ImagesAreEqual(string pathImage1, string pathImage2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
             if (compareMetadata)
             {
-                var hasMetadataDiff = MetadataComparer.CompareMetadata(pathImageActual, pathImageExpected)?.Count != 0;
+                var hasMetadataDiff = MetadataComparer.CompareMetadata(pathImage1, pathImage2)?.Count != 0;
 
                 if (hasMetadataDiff)
                 {
@@ -73,26 +73,26 @@ namespace Codeuctivity.SkiaSharpCompare
                 }
             }
 
-            using var actualImage = SKBitmap.Decode(pathImageActual);
-            using var expectedImage = SKBitmap.Decode(pathImageExpected);
-            return ImagesAreEqual(actualImage, expectedImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+            using var image1 = SKBitmap.Decode(pathImage1);
+            using var image2 = SKBitmap.Decode(pathImage2);
+            return ImagesAreEqual(image1, image2, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
         /// Compares two images for equivalence
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
-        /// <param name="compareMetadata"></param>
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Stream actual, Stream expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
+        public static bool ImagesAreEqual(Stream image1, Stream image2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
             if (compareMetadata)
             {
-                var hasMetadataDiff = MetadataComparer.CompareMetadata(actual, expected)?.Count != 0;
+                var hasMetadataDiff = MetadataComparer.CompareMetadata(image1, image2)?.Count != 0;
 
                 if (hasMetadataDiff)
                 {
@@ -100,53 +100,53 @@ namespace Codeuctivity.SkiaSharpCompare
                 }
             }
 
-            ArgumentNullException.ThrowIfNull(actual);
-            ArgumentNullException.ThrowIfNull(expected);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
 
-            using var actualImage = DecodeStream(actual);
-            using var expectedImage = DecodeStream(expected);
-            return ImagesAreEqual(actualImage, expectedImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+            using var decodedImage1 = DecodeStream(image1);
+            using var decodedImage2 = DecodeStream(image2);
+            return ImagesAreEqual(decodedImage1, decodedImage2, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
         /// Compares two images for equivalence
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="transparencyOptions"></param>
         /// <param name="pixelColorShiftTolerance"></param>
-        /// <param name="compareMetadata"></param>
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
+        public static bool ImagesAreEqual(SKBitmap image1, SKBitmap image2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, bool compareMetadata = false)
         {
             if (compareMetadata)
             {
                 throw new NotSupportedException("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison.");
             }
 
-            ArgumentNullException.ThrowIfNull(actual);
-            ArgumentNullException.ThrowIfNull(expected);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
 
-            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
+            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(image1, image2))
             {
                 return false;
             }
 
-            if (resizeOption == ResizeOption.DontResize || ImagesHaveSameDimension(actual, expected))
+            if (resizeOption == ResizeOption.DontResize || ImagesHaveSameDimension(image1, image2))
             {
-                for (var x = 0; x < actual.Width; x++)
+                for (var x = 0; x < image1.Width; x++)
                 {
-                    for (var y = 0; y < actual.Height; y++)
+                    for (var y = 0; y < image1.Height; y++)
                     {
-                        if (transparencyOptions == TransparencyOptions.CompareAlphaChannel && pixelColorShiftTolerance == 0 && !actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
+                        if (transparencyOptions == TransparencyOptions.CompareAlphaChannel && pixelColorShiftTolerance == 0 && !image1.GetPixel(x, y).Equals(image2.GetPixel(x, y)))
                         {
                             return false;
                         }
                         else
                         {
-                            var actualPixel = actual.GetPixel(x, y);
-                            var expectedPixel = expected.GetPixel(x, y);
+                            var actualPixel = image1.GetPixel(x, y);
+                            var expectedPixel = image2.GetPixel(x, y);
                             var a = 0;
 
                             if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
@@ -170,7 +170,7 @@ namespace Codeuctivity.SkiaSharpCompare
                 return true;
             }
 
-            var grown = GrowToSameDimension(actual, expected);
+            var grown = GrowToSameDimension(image1, image2);
             try
             {
                 return ImagesAreEqual(grown.Item1, grown.Item2, ResizeOption.DontResize);
@@ -185,35 +185,35 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
-        /// <param name="pathActualImage"></param>
-        /// <param name="pathExpectedImage"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
+        public static ICompareResult CalcDiff(string pathImage1, string pathImage2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
         {
-            using var actual = SKBitmap.Decode(pathActualImage);
-            using var expected = SKBitmap.Decode(pathExpectedImage);
+            using var actual = SKBitmap.Decode(pathImage1);
+            using var expected = SKBitmap.Decode(pathImage2);
             return CalcDiffInternal(actual, expected, null, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
-        /// <param name="actualImage"></param>
-        /// <param name="expectedImage"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
+        public static ICompareResult CalcDiff(Stream image1, Stream image2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
         {
-            ArgumentNullException.ThrowIfNull(actualImage);
-            ArgumentNullException.ThrowIfNull(expectedImage);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
 
-            using var actual = DecodeStream(actualImage);
-            using var expected = DecodeStream(expectedImage);
+            using var actual = DecodeStream(image1);
+            using var expected = DecodeStream(image2);
             return CalcDiffInternal(actual, expected, null, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
@@ -229,30 +229,30 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            using var actual = SKBitmap.Decode(pathActualImage);
-            using var expected = SKBitmap.Decode(pathExpectedImage);
+            using var image1 = SKBitmap.Decode(pathActualImage);
+            using var image2 = SKBitmap.Decode(pathExpectedImage);
             using var mask = SKBitmap.Decode(pathMaskImage);
-            return CalcDiff(actual, expected, mask, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+            return CalcDiff(image1, image2, mask, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
-        /// <param name="actualImage"></param>
-        /// <param name="expectedImage"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns></returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static ICompareResult CalcDiff(Stream image1, Stream image2, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            ArgumentNullException.ThrowIfNull(actualImage);
-            ArgumentNullException.ThrowIfNull(expectedImage);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
             ArgumentNullException.ThrowIfNull(maskImage);
 
-            using var actual = DecodeStream(actualImage);
-            using var expected = DecodeStream(expectedImage);
+            using var actual = DecodeStream(image1);
+            using var expected = DecodeStream(image2);
             return CalcDiff(actual, expected, maskImage, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
@@ -283,32 +283,32 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Compares two images for equivalence
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns></returns>
-        public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static ICompareResult CalcDiff(SKBitmap image1, SKBitmap image2, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            ArgumentNullException.ThrowIfNull(actual);
-            ArgumentNullException.ThrowIfNull(expected);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
             ArgumentNullException.ThrowIfNull(maskImage);
 
             var metadataDifference = new Dictionary<string, (string? ValueA, string? ValueB)>();
-            return CalcDiff(actual, expected, maskImage, metadataDifference, resizeOption, pixelColorShiftTolerance, transparencyOptions);
+            return CalcDiff(image1, image2, maskImage, metadataDifference, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
-        internal static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, Dictionary<string, (string? ValueA, string? ValueB)> metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        internal static ICompareResult CalcDiff(SKBitmap image1, SKBitmap image2, SKBitmap maskImage, Dictionary<string, (string? ValueA, string? ValueB)> metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
             ArgumentNullException.ThrowIfNull(maskImage);
 
-            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, maskImage);
+            var imagesHaveSameDimension = ImagesHaveSameDimension(image1, image2) && ImagesHaveSameDimension(image1, maskImage);
 
             if (resizeOption == ResizeOption.Resize && !imagesHaveSameDimension)
             {
-                var grown = GrowToSameDimension(actual, expected, maskImage);
+                var grown = GrowToSameDimension(image1, image2, maskImage);
                 try
                 {
                     return CalcDiff(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
@@ -326,17 +326,17 @@ namespace Codeuctivity.SkiaSharpCompare
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
             }
 
-            var quantity = actual.Width * actual.Height;
+            var quantity = image1.Width * image1.Height;
             var absoluteError = 0;
             var pixelErrorCount = 0;
 
-            for (var x = 0; x < actual.Width; x++)
+            for (var x = 0; x < image1.Width; x++)
             {
-                for (var y = 0; y < actual.Height; y++)
+                for (var y = 0; y < image1.Height; y++)
                 {
                     var maskImagePixel = maskImage.GetPixel(x, y);
-                    var actualPixel = actual.GetPixel(x, y);
-                    var expectedPixel = expected.GetPixel(x, y);
+                    var actualPixel = image1.GetPixel(x, y);
+                    var expectedPixel = image2.GetPixel(x, y);
 
                     var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
                     var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
@@ -380,20 +380,20 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="metadataDifference"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        internal static ICompareResult CalcDiffInternal(SKBitmap actual, SKBitmap expected, Dictionary<string, (string? ValueA, string? ValueB)>? metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
+        internal static ICompareResult CalcDiffInternal(SKBitmap image1, SKBitmap image2, Dictionary<string, (string? ValueA, string? ValueB)>? metadataDifference, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.IgnoreAlphaChannel)
         {
-            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
+            var imagesHaveSameDimension = ImagesHaveSameDimension(image1, image2);
 
             if (resizeOption == ResizeOption.Resize && !imagesHaveSameDimension)
             {
-                var grown = GrowToSameDimension(actual, expected);
+                var grown = GrowToSameDimension(image1, image2);
                 try
                 {
                     return CalcDiffInternal(grown.Item1, grown.Item2, metadataDifference, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
@@ -405,21 +405,21 @@ namespace Codeuctivity.SkiaSharpCompare
                 }
             }
 
-            if (!ImagesHaveSameDimension(actual, expected))
+            if (!ImagesHaveSameDimension(image1, image2))
             {
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
             }
 
-            var quantity = actual.Width * actual.Height;
+            var quantity = image1.Width * image1.Height;
             var absoluteError = 0;
             var pixelErrorCount = 0;
 
-            for (var x = 0; x < actual.Width; x++)
+            for (var x = 0; x < image1.Width; x++)
             {
-                for (var y = 0; y < actual.Height; y++)
+                for (var y = 0; y < image1.Height; y++)
                 {
-                    var actualPixel = actual.GetPixel(x, y);
-                    var expectedPixel = expected.GetPixel(x, y);
+                    var actualPixel = image1.GetPixel(x, y);
+                    var expectedPixel = image2.GetPixel(x, y);
 
                     var r = Math.Abs(expectedPixel.Red - actualPixel.Red);
                     var g = Math.Abs(expectedPixel.Green - actualPixel.Green);
@@ -451,33 +451,33 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
-        /// <param name="pathActualImage"></param>
-        /// <param name="pathExpectedImage"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static SKBitmap CalcDiffMaskImage(string pathImage1, string pathImage2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            using var actual = SKBitmap.Decode(pathActualImage);
-            using var expected = SKBitmap.Decode(pathExpectedImage);
+            using var actual = SKBitmap.Decode(pathImage1);
+            using var expected = SKBitmap.Decode(pathImage2);
             return CalcDiffMaskImage(actual, expected, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
 
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
-        /// <param name="pathActualImage"></param>
-        /// <param name="pathExpectedImage"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <param name="pathMaskImage"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static SKBitmap CalcDiffMaskImage(string pathImage1, string pathImage2, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            using var actual = SKBitmap.Decode(pathActualImage);
-            using var expected = SKBitmap.Decode(pathExpectedImage);
+            using var actual = SKBitmap.Decode(pathImage1);
+            using var expected = SKBitmap.Decode(pathImage2);
             using var mask = SKBitmap.Decode(pathMaskImage);
             return CalcDiffMaskImage(actual, expected, mask, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
@@ -485,19 +485,19 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
-        /// <param name="actualImage"></param>
-        /// <param name="expectedImage"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static SKBitmap CalcDiffMaskImage(Stream image1, Stream image2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            ArgumentNullException.ThrowIfNull(actualImage);
-            ArgumentNullException.ThrowIfNull(expectedImage);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
 
-            using var actual = DecodeStream(actualImage);
-            using var expected = DecodeStream(expectedImage);
+            using var actual = DecodeStream(image1);
+            using var expected = DecodeStream(image2);
 
             return CalcDiffMaskImage(actual, expected, resizeOption, pixelColorShiftTolerance, transparencyOptions);
         }
@@ -505,21 +505,21 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
-        /// <param name="actualImage"></param>
-        /// <param name="expectedImage"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static SKBitmap CalcDiffMaskImage(Stream image1, Stream image2, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            ArgumentNullException.ThrowIfNull(actualImage);
-            ArgumentNullException.ThrowIfNull(expectedImage);
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
             ArgumentNullException.ThrowIfNull(maskImage);
 
-            using var actual = DecodeStream(actualImage);
-            using var expected = DecodeStream(expectedImage);
+            using var actual = DecodeStream(image1);
+            using var expected = DecodeStream(image2);
             using var mask = DecodeStream(maskImage);
 
             return CalcDiffMaskImage(actual, expected, mask, resizeOption, pixelColorShiftTolerance, transparencyOptions);
@@ -528,15 +528,15 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static SKBitmap CalcDiffMaskImage(SKBitmap image1, SKBitmap image2, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
-            var imagesHAveSameDimension = ImagesHaveSameDimension(actual, expected);
+            var imagesHAveSameDimension = ImagesHaveSameDimension(image1, image2);
 
             if (resizeOption == ResizeOption.DontResize && !imagesHAveSameDimension)
             {
@@ -545,14 +545,14 @@ namespace Codeuctivity.SkiaSharpCompare
 
             if (imagesHAveSameDimension)
             {
-                var maskImage = new SKBitmap(actual.Width, actual.Height);
+                var maskImage = new SKBitmap(image1.Width, image1.Height);
 
-                for (var x = 0; x < actual.Width; x++)
+                for (var x = 0; x < image1.Width; x++)
                 {
-                    for (var y = 0; y < actual.Height; y++)
+                    for (var y = 0; y < image1.Height; y++)
                     {
-                        var actualPixel = actual.GetPixel(x, y);
-                        var expectedPixel = expected.GetPixel(x, y);
+                        var actualPixel = image1.GetPixel(x, y);
+                        var expectedPixel = image2.GetPixel(x, y);
 
                         var red = (byte)Math.Abs(actualPixel.Red - expectedPixel.Red);
                         var green = (byte)Math.Abs(actualPixel.Green - expectedPixel.Green);
@@ -618,7 +618,7 @@ namespace Codeuctivity.SkiaSharpCompare
                 return maskImage;
             }
 
-            var grown = GrowToSameDimension(actual, expected);
+            var grown = GrowToSameDimension(image1, image2);
             try
             {
                 return CalcDiffMaskImage(grown.Item1, grown.Item2, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
@@ -633,18 +633,18 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="mask"></param>
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <param name="transparencyOptions"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected, SKBitmap mask, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
+        public static SKBitmap CalcDiffMaskImage(SKBitmap image1, SKBitmap image2, SKBitmap mask, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel)
         {
             ArgumentNullException.ThrowIfNull(mask);
 
-            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, mask);
+            var imagesHaveSameDimension = ImagesHaveSameDimension(image1, image2) && ImagesHaveSameDimension(image1, mask);
 
             if (resizeOption == ResizeOption.DontResize && !imagesHaveSameDimension)
             {
@@ -653,14 +653,14 @@ namespace Codeuctivity.SkiaSharpCompare
 
             if (imagesHaveSameDimension)
             {
-                var maskImage = new SKBitmap(actual.Width, actual.Height);
+                var maskImage = new SKBitmap(image1.Width, image1.Height);
 
-                for (var x = 0; x < actual.Width; x++)
+                for (var x = 0; x < image1.Width; x++)
                 {
-                    for (var y = 0; y < actual.Height; y++)
+                    for (var y = 0; y < image1.Height; y++)
                     {
-                        var actualPixel = actual.GetPixel(x, y);
-                        var expectedPixel = expected.GetPixel(x, y);
+                        var actualPixel = image1.GetPixel(x, y);
+                        var expectedPixel = image2.GetPixel(x, y);
                         var maskPixel = mask.GetPixel(x, y);
 
                         var redDiff = Math.Abs(actualPixel.Red - expectedPixel.Red);
@@ -729,7 +729,7 @@ namespace Codeuctivity.SkiaSharpCompare
                 return maskImage;
             }
 
-            var grown = GrowToSameDimension(actual, expected, mask);
+            var grown = GrowToSameDimension(image1, image2, mask);
             try
             {
                 return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize, pixelColorShiftTolerance, transparencyOptions);
@@ -742,26 +742,26 @@ namespace Codeuctivity.SkiaSharpCompare
             }
         }
 
-        private static (SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected)
+        private static (SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap image1, SKBitmap image2)
         {
-            var biggestWidth = actual.Width > expected.Width ? actual.Width : expected.Width;
-            var biggestHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+            var biggestWidth = image1.Width > image2.Width ? image1.Width : image2.Width;
+            var biggestHeight = image1.Height > image2.Height ? image1.Height : image2.Height;
             var skSize = new SKSizeI(biggestWidth, biggestHeight);
-            var grownExpected = expected.Resize(skSize, SKSamplingOptions.Default);
-            var grownActual = actual.Resize(skSize, SKSamplingOptions.Default);
+            var grownExpected = image2.Resize(skSize, SKSamplingOptions.Default);
+            var grownActual = image1.Resize(skSize, SKSamplingOptions.Default);
 
             return (grownActual, grownExpected);
         }
 
-        private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected, SKBitmap mask)
+        private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap image1, SKBitmap image2, SKBitmap mask)
         {
-            var biggestWidth = actual.Width > expected.Width ? actual.Width : expected.Width;
+            var biggestWidth = image1.Width > image2.Width ? image1.Width : image2.Width;
             biggestWidth = biggestWidth > mask.Width ? biggestWidth : mask.Width;
-            var biggestHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+            var biggestHeight = image1.Height > image2.Height ? image1.Height : image2.Height;
             biggestHeight = biggestHeight > mask.Height ? biggestHeight : mask.Height;
             var skSize = new SKSizeI(biggestWidth, biggestHeight);
-            var grownExpected = expected.Resize(skSize, SKSamplingOptions.Default);
-            var grownActual = actual.Resize(skSize, SKSamplingOptions.Default);
+            var grownExpected = image2.Resize(skSize, SKSamplingOptions.Default);
+            var grownActual = image1.Resize(skSize, SKSamplingOptions.Default);
             var grownMask = mask.Resize(skSize, SKSamplingOptions.Default);
 
             return (grownActual, grownExpected, grownMask);
