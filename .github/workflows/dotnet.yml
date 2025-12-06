@@ -82,13 +82,14 @@ jobs:
       run: |
         dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
     - name: Github release
+      shell: bash
       env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
           # Attach all downloaded CLI artifacts regardless of OS
-          # After (fixed)
-          gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/**/* --generate-notes
+          zip -r cli-artifacts.zip ./artifacts_download
+          gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg cli-artifacts.zip --generate-notes
 
   deployTest:
     if: ${{ !startsWith(github.ref, 'refs/heads/release') }}
@@ -124,4 +125,5 @@ jobs:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
-        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg ./artifacts_download/**/* --prerelease --generate-notes
+        zip -r cli-artifacts.zip ./artifacts_download
+        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg cli-artifacts.zip --prerelease --generate-notes
