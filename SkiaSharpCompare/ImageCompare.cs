@@ -1,4 +1,5 @@
 ﻿using SkiaSharp;
+using System;
 using System.IO;
 
 namespace Codeuctivity.SkiaSharpCompare
@@ -22,11 +23,13 @@ namespace Codeuctivity.SkiaSharpCompare
         /// cref="TransparencyOptions.CompareAlphaChannel"/>.</param>
         /// <param name="pixelColorShiftTolerance">Specifies the tolerance for color shifts in pixel values during comparison.  A value of 0 means no
         /// tolerance, and higher values allow for greater differences. The default is 0.</param>
-        public ImageCompare(ResizeOption resizeOption = ResizeOption.DontResize, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, int pixelColorShiftTolerance = 0)
+        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
+        public ImageCompare(ResizeOption resizeOption = ResizeOption.DontResize, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, int pixelColorShiftTolerance = 0, bool compareMetadata = false)
         {
             ResizeOption = resizeOption;
             TransparencyOptions = transparencyOptions;
             PixelColorShiftTolerance = pixelColorShiftTolerance;
+            CompareMetadata = compareMetadata;
         }
 
         /// <summary>
@@ -47,120 +50,202 @@ namespace Codeuctivity.SkiaSharpCompare
         public int PixelColorShiftTolerance { get; }
 
         /// <summary>
+        /// Gets a value indicating whether metadata should be included in the comparison operation.
+        /// </summary>
+        public bool CompareMetadata { get; }
+
+        /// <summary>
         /// Calculates the difference between two images located at the specified file paths.
         /// </summary>
         /// <remarks>The comparison process may involve resizing the images or applying tolerances for
         /// pixel color shifts and transparency, depending on the configured options.</remarks>
-        /// <param name="absolutePathPic1">The absolute file path to the first image. This cannot be null or empty.</param>
-        /// <param name="absolutePathPic2">The absolute file path to the second image. This cannot be null or empty.</param>
+        /// <param name="pathImage1">The  file path to the first image. This cannot be null or empty.</param>
+        /// <param name="pathImage2">The  file path to the second image. This cannot be null or empty.</param>
         /// <returns>An <see cref="ICompareResult"/> object representing the differences between the two images.</returns>
-        public ICompareResult CalcDiff(string absolutePathPic1, string absolutePathPic2)
+        public ICompareResult CalcDiff(string pathImage1, string pathImage2)
         {
-            return Compare.CalcDiff(absolutePathPic1, absolutePathPic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            var compareResult = Compare.CalcDiff(pathImage1, pathImage2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+
+            if (CompareMetadata)
+            {
+                var metadataDiff = MetadataComparer.CompareMetadata(pathImage1, pathImage2);
+                return new CompareResultWithMetadata(compareResult, metadataDiff);
+            }
+
+            return compareResult;
         }
 
         /// <summary>
         /// Calculates the difference between two images located at the specified file paths, using a provided difference mask.
         /// </summary>
-        /// <param name="absolutePathPic1"></param>
-        /// <param name="absolutePathPic2"></param>
+        /// <param name="pahtImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <param name="differenceMask"></param>
         /// <returns></returns>
-        public ICompareResult CalcDiff(string absolutePathPic1, string absolutePathPic2, string differenceMask)
+        public ICompareResult CalcDiff(string pahtImage1, string pathImage2, string differenceMask)
         {
-            return Compare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            var compareResult = Compare.CalcDiff(pahtImage1, pathImage2, differenceMask, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+
+            if (CompareMetadata)
+            {
+                var metadataDiff = MetadataComparer.CompareMetadata(pahtImage1, pathImage2);
+                return new CompareResultWithMetadata(compareResult, metadataDiff);
+            }
+
+            return compareResult;
         }
 
         /// <summary>
         /// Calculates the difference between two in-memory images represented as <see cref="SKBitmap"/> objects.
         /// </summary>
-        /// <param name="absolutePic1"></param>
-        /// <param name="absolutePic2"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <returns></returns>
+        public ICompareResult CalcDiff(SKBitmap image1, SKBitmap image2)
+        {
+            ArgumentNullException.ThrowIfNull(image1);
+            ArgumentNullException.ThrowIfNull(image2);
+
+            if (CompareMetadata)
+            {
+                throw new NotSupportedException("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison.");
+            }
+
+            return Compare.CalcDiffInternal(image1, image2, null, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+        }
+
+        /// <summary>
+        /// Calculates the difference between two in-memory images represented as <see cref="SKBitmap"/> objects.
+        /// </summary>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="differenceMaskPic"></param>
         /// <returns></returns>
-        public ICompareResult CalcDiff(SKBitmap absolutePic1, SKBitmap absolutePic2, SKBitmap differenceMaskPic)
+        public ICompareResult CalcDiff(SKBitmap image1, SKBitmap image2, SKBitmap differenceMaskPic)
         {
-            return Compare.CalcDiff(absolutePic1, absolutePic2, differenceMaskPic, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            if (CompareMetadata)
+            {
+                throw new NotSupportedException("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison.");
+            }
+
+            return Compare.CalcDiff(image1, image2, differenceMaskPic, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Calculates the difference between two in-memory images represented as <see cref="SKBitmap"/> objects.
         /// </summary>
-        /// <param name="pic1"></param>
-        /// <param name="pic2"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <returns></returns>
-        public ICompareResult CalcDiff(FileStream pic1, FileStream pic2)
+        public ICompareResult CalcDiff(Stream image1, Stream image2)
         {
-            return Compare.CalcDiff(pic1, pic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            var compareResult = Compare.CalcDiff(image1, image2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+
+            if (CompareMetadata)
+            {
+                if (image1.CanSeek)
+                {
+                    image1.Position = 0;
+                }
+
+                if (image2.CanSeek)
+                {
+                    image2.Position = 0;
+                }
+
+                var metadataDiff = MetadataComparer.CompareMetadata(image1, image2);
+
+                if (image1.CanSeek)
+                {
+                    image1.Position = 0;
+                }
+
+                if (image2.CanSeek)
+                {
+                    image2.Position = 0;
+                }
+
+                return new CompareResultWithMetadata(compareResult, metadataDiff);
+            }
+
+            return compareResult;
         }
 
         /// <summary>
         /// Calculates the difference between two images provided as file streams, using a specified mask image to focus the comparison.
         /// </summary>
-        /// <param name="pic1"></param>
-        /// <param name="pic2"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <param name="maskImage"></param>
         /// <returns></returns>
-        public ICompareResult CalcDiff(FileStream pic1, FileStream pic2, SKBitmap maskImage)
+        public ICompareResult CalcDiff(Stream image1, Stream image2, SKBitmap maskImage)
         {
-            return Compare.CalcDiff(pic1, pic2, maskImage, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            var compareResult = Compare.CalcDiff(image1, image2, maskImage, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+
+            if (CompareMetadata)
+            {
+                var metadataDiff = MetadataComparer.CompareMetadata(image1, image2);
+                return new CompareResultWithMetadata(compareResult, metadataDiff);
+            }
+
+            return compareResult;
         }
 
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two images located at the specified file paths.
         /// </summary>
-        /// <param name="absolutePathPic1"></param>
-        /// <param name="absolutePathPic2"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(string absolutePathPic1, string absolutePathPic2)
+        public SKBitmap CalcDiffMaskImage(string pathImage1, string pathImage2)
         {
-            return Compare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(pathImage1, pathImage2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two in-memory images represented as <see cref="SKBitmap"/> objects.
         /// </summary>
-        /// <param name="absolutePic1"></param>
-        /// <param name="absolutePic2"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(SKBitmap absolutePic1, SKBitmap absolutePic2)
+        public SKBitmap CalcDiffMaskImage(SKBitmap image1, SKBitmap image2)
         {
-            return Compare.CalcDiffMaskImage(absolutePic1, absolutePic2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(image1, image2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two images located at the specified file paths,
         /// </summary>
-        /// <param name="image1Path"></param>
-        /// <param name="image2Path"></param>
-        /// <param name="diffMask1Path"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
+        /// <param name="pathDiffMask"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(string image1Path, string image2Path, string diffMask1Path)
+        public SKBitmap CalcDiffMaskImage(string pathImage1, string pathImage2, string pathDiffMask)
         {
-            return Compare.CalcDiffMaskImage(image1Path, image2Path, diffMask1Path, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(pathImage1, pathImage2, pathDiffMask, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two images provided as file streams.
         /// </summary>
-        /// <param name="image1Stream"></param>
-        /// <param name="image2Stream"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(FileStream image1Stream, FileStream image2Stream)
+        public SKBitmap CalcDiffMaskImage(Stream image1, Stream image2)
         {
-            return Compare.CalcDiffMaskImage(image1Stream, image2Stream, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(image1, image2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Calculates a difference mask image that highlights the differences between two images provided as file streams,
         /// </summary>
-        /// <param name="image1Stream"></param>
-        /// <param name="image2Stream"></param>
-        /// <param name="diffMask1Stream"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
+        /// <param name="diffMask"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(FileStream image1Stream, FileStream image2Stream, FileStream diffMask1Stream)
+        public SKBitmap CalcDiffMaskImage(Stream image1, Stream image2, Stream diffMask)
         {
-            return Compare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(image1, image2, diffMask, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
@@ -168,55 +253,55 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="image1"></param>
         /// <param name="image2"></param>
-        /// <param name="diffMask1Image"></param>
+        /// <param name="diffMask"></param>
         /// <returns></returns>
-        public SKBitmap CalcDiffMaskImage(SKBitmap image1, SKBitmap image2, SKBitmap diffMask1Image)
+        public SKBitmap CalcDiffMaskImage(SKBitmap image1, SKBitmap image2, SKBitmap diffMask)
         {
-            return Compare.CalcDiffMaskImage(image1, image2, diffMask1Image, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.CalcDiffMaskImage(image1, image2, diffMask, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
         }
 
         /// <summary>
         /// Checks if two images located at the specified file paths are identical, considering the configured options for resizing,
         /// </summary>
-        /// <param name="absolutePathActual"></param>
-        /// <param name="absolutePathExpected"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <returns></returns>
-        public bool ImagesAreEqual(string absolutePathActual, string absolutePathExpected)
+        public bool ImagesAreEqual(string pathImage1, string pathImage2)
         {
-            return Compare.ImagesAreEqual(absolutePathActual, absolutePathExpected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.ImagesAreEqual(pathImage1, pathImage2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions, CompareMetadata);
         }
 
         /// <summary>
         /// Checks if two images provided as file streams are identical, considering the configured options for resizing,
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <returns></returns>
-        public bool ImagesAreEqual(FileStream actual, FileStream expected)
+        public bool ImagesAreEqual(Stream image1, Stream image2)
         {
-            return Compare.ImagesAreEqual(actual, expected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.ImagesAreEqual(image1, image2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions, CompareMetadata);
         }
 
         /// <summary>
         /// Checks if two in-memory images represented as <see cref="SKBitmap"/> objects are identical, considering the configured options for resizing,
         /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
+        /// <param name="image1"></param>
+        /// <param name="image2"></param>
         /// <returns></returns>
-        public bool ImagesAreEqual(SKBitmap actual, SKBitmap expected)
+        public bool ImagesAreEqual(SKBitmap image1, SKBitmap image2)
         {
-            return Compare.ImagesAreEqual(actual, expected, ResizeOption, PixelColorShiftTolerance, TransparencyOptions);
+            return Compare.ImagesAreEqual(image1, image2, ResizeOption, PixelColorShiftTolerance, TransparencyOptions, CompareMetadata);
         }
 
         /// <summary>
         /// Checks if two images have the same dimensions (width and height).
         /// </summary>
-        /// <param name="absolutePathActual"></param>
-        /// <param name="absolutePathExpected"></param>
+        /// <param name="pathImage1"></param>
+        /// <param name="pathImage2"></param>
         /// <returns></returns>
-        public static bool ImagesHaveEqualSize(string absolutePathActual, string absolutePathExpected)
+        public static bool ImagesHaveEqualSize(string pathImage1, string pathImage2)
         {
-            return Compare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected);
+            return Compare.ImagesHaveEqualSize(pathImage1, pathImage2);
         }
     }
 }
