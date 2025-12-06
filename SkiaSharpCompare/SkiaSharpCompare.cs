@@ -368,7 +368,7 @@ namespace Codeuctivity.SkiaSharpCompare
                         }
                     }
 
-                    absoluteError = absoluteError + (error > pixelColorShiftTolerance ? error : 0);
+                    absoluteError += (error > pixelColorShiftTolerance ? error : 0);
                     pixelErrorCount += error > pixelColorShiftTolerance ? 1 : 0;
                 }
             }
@@ -428,9 +428,9 @@ namespace Codeuctivity.SkiaSharpCompare
                     if (transparencyOptions == TransparencyOptions.CompareAlphaChannel)
                     {
                         var a = Math.Abs(expectedPixel.Alpha - actualPixel.Alpha);
-                        sum = sum + a;
+                        sum += a;
                     }
-                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum : 0);
+                    absoluteError += (sum > pixelColorShiftTolerance ? sum : 0);
                     pixelErrorCount += (sum > pixelColorShiftTolerance) ? 1 : 0;
                 }
             }
