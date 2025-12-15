@@ -48,7 +48,7 @@ jobs:
         dotnet publish SkiaSharpCompare.Cli/SkiaSharpCompare.Cli.csproj -c Release -r win-arm64 --self-contained true -p:PublishSingleFile=true -o ./artifacts/cli/win-arm64
 
     - name: Upload CLI artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: cli-artifacts-${{ matrix.os }}
         path: ./artifacts/cli
