@@ -8,6 +8,9 @@ on:
     paths-ignore:
       - '**.md'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -86,7 +89,7 @@ jobs:
     - name: Github release
       shell: bash
       env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
           # Attach all downloaded CLI artifacts regardless of OS
@@ -124,7 +127,7 @@ jobs:
     - name: Github prerelease
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ github.TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
         zip -r cli-artifacts.zip ./artifacts_download
