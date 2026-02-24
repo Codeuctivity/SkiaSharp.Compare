@@ -261,7 +261,7 @@ namespace SkiaSharpCompareTestNunit
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
-        [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, TestFiles.pngTransparent2x2px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
+        [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, TestFiles.pngTransparent4x4px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
         [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, 0)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, TestFiles.pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize, 0)]

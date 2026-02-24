@@ -61,7 +61,7 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.jpg0Rgb24, TestFiles.jpg0Rgb24, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngPartialTransparent2x2px, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngPartialTransparent4x4px, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
         public void ShouldVerifyThatImagesAreEqual(string pathActual, string pathExpected, ResizeOption resizeOption, TransparencyOptions transparencyOptions)
         {
             var sut = new ImageCompare(resizeOption, transparencyOptions);
@@ -131,8 +131,8 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.renderedForm2, TestFiles.renderedForm1, 49267623, 60.794204096742348d, 174178, 21.49284304047384d, ResizeOption.Resize, 0, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.colorShift1, TestFiles.colorShift2, 117896, 3.437201166180758d, 30398, 88.623906705539355d, ResizeOption.DontResize, 0, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.colorShift1, TestFiles.colorShift2, 0, 0, 0, 0, ResizeOption.DontResize, 15, TransparencyOptions.CompareAlphaChannel)]
-        [TestCase(TestFiles.pngPartialTransparent2x2px, TestFiles.pngTransparent2x2px, 2048, 128.0d, 16, 100, ResizeOption.DontResize, 0, TransparencyOptions.CompareAlphaChannel)]
-        [TestCase(TestFiles.pngPartialTransparent2x2px, TestFiles.pngTransparent2x2px, 0, 0, 0, 0, ResizeOption.DontResize, 0, TransparencyOptions.IgnoreAlphaChannel)]
+        [TestCase(TestFiles.pngPartialTransparent4x4px, TestFiles.pngTransparent4x4px, 2048, 128.0d, 16, 100, ResizeOption.DontResize, 0, TransparencyOptions.CompareAlphaChannel)]
+        [TestCase(TestFiles.pngPartialTransparent4x4px, TestFiles.pngTransparent4x4px, 0, 0, 0, 0, ResizeOption.DontResize, 0, TransparencyOptions.IgnoreAlphaChannel)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption, int colorShiftTolerance, TransparencyOptions transparencyOptions)
         {
             var sut = new ImageCompare(resizeOption, transparencyOptions, colorShiftTolerance);
@@ -212,7 +212,7 @@ namespace SkiaSharpCompareTestNunit
 
         [TestCase(TestFiles.png0Rgba32, TestFiles.png1Rgba32, null, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngPartialTransparent2x2px, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngPartialTransparent4x4px, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png1Rgba32, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png1Rgba32, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack4x4px, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
@@ -259,15 +259,15 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.jpg0Rgb24, TestFiles.jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.jpg0Rgb24, TestFiles.jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.jpg0Rgb24, TestFiles.jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, TransparencyOptions.IgnoreAlphaChannel)]
         public void ShouldCalcDiffMaskSKBitmapAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption, TransparencyOptions transparencyOptions)
         {
             var sut = new ImageCompare(resizeOption, transparencyOptions);
@@ -294,7 +294,7 @@ namespace SkiaSharpCompareTestNunit
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
-        [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, TestFiles.pngTransparent2x2px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
+        [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, TestFiles.pngTransparent4x4px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
         [TestCase(TestFiles.pngWhite2x2px, TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, 0)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, TestFiles.pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize, 0)]
@@ -363,8 +363,8 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.colorShift1, TestFiles.colorShift2, TransparencyOptions.CompareAlphaChannel, 20)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.png1Rgba32, TransparencyOptions.IgnoreAlphaChannel, 0)]
         [TestCase(TestFiles.colorShift1, TestFiles.colorShift2, TransparencyOptions.IgnoreAlphaChannel, 20)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngPartialTransparent2x2px, TransparencyOptions.IgnoreAlphaChannel, 0)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngPartialTransparent2x2px, TransparencyOptions.CompareAlphaChannel, 0)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngPartialTransparent4x4px, TransparencyOptions.IgnoreAlphaChannel, 0)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngPartialTransparent4x4px, TransparencyOptions.CompareAlphaChannel, 0)]
         public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByFilePath_NoDifferences(string image1RelativePath, string image2RelativePath, TransparencyOptions transparencyOptions, int colorShiftTolerance)
         {
             var sut = new ImageCompare(ResizeOption.DontResize, transparencyOptions, colorShiftTolerance);
@@ -443,7 +443,7 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.jpg0Rgb24, TestFiles.png0Rgba32)]
         [TestCase(TestFiles.jpg1Rgb24, TestFiles.png1Rgba32)]
         [TestCase(TestFiles.colorShift1, TestFiles.colorShift2)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngPartialTransparent2x2px)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngPartialTransparent4x4px)]
         public void ShouldVerifyThatImagesAreNotEqual(string pathActual, string pathExpected)
         {
             var sut = new ImageCompare();
@@ -460,7 +460,7 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.jpg0Rgb24, TestFiles.png0Rgba32)]
         [TestCase(TestFiles.jpg1Rgb24, TestFiles.png1Rgba32)]
         [TestCase(TestFiles.colorShift1, TestFiles.colorShift2)]
-        [TestCase(TestFiles.pngTransparent2x2px, TestFiles.pngPartialTransparent2x2px)]
+        [TestCase(TestFiles.pngTransparent4x4px, TestFiles.pngPartialTransparent4x4px)]
         public void ShouldVerifyThatImageStreamAreNotEqual(string pathActual, string pathExpected)
         {
             var sut = new ImageCompare();
@@ -489,8 +489,8 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, TestFiles.pngBlack2x2px)]
         [TestCase(TestFiles.png0Rgba32, TestFiles.pngBlack2x2px, TestFiles.png0Rgba32)]
         [TestCase(TestFiles.pngBlack2x2px, TestFiles.png0Rgba32, TestFiles.png0Rgba32)]
-        [TestCase(TestFiles.pngPartialTransparent2x2px, TestFiles.png0Rgba32, TestFiles.png0Rgba32)]
-        [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, TestFiles.pngPartialTransparent2x2px)]
+        [TestCase(TestFiles.pngPartialTransparent4x4px, TestFiles.png0Rgba32, TestFiles.png0Rgba32)]
+        [TestCase(TestFiles.png0Rgba32, TestFiles.png0Rgba32, TestFiles.pngPartialTransparent4x4px)]
         public void ShouldVerifyThatImageWithDifferentSizeThrows(string pathPic1, string pathPic2, string pathPic3)
         {
             var sut = new ImageCompare();
