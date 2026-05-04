@@ -59,6 +59,18 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
 
+    - name: Benchmark
+      if: runner.os == 'Linux'
+      run: |
+        dotnet run --configuration Release --project SkiaSharpCompare.Benchmarks/SkiaSharpCompare.Benchmarks.csproj -- --artifacts ./artifacts/benchmarks
+
+    - name: Upload benchmark artifacts
+      if: runner.os == 'Linux'
+      uses: actions/upload-artifact@v7
+      with:
+        name: benchmark-artifacts-${{ matrix.os }}
+        path: ./artifacts/benchmarks
+
   deployRelease:
     if: startsWith(github.ref, 'refs/heads/release')
     runs-on: ubuntu-latest
@@ -76,7 +88,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Download CLI artifacts
+    - name: Download build artifacts
       uses: actions/download-artifact@v8
       with:
          path: ./artifacts_download
@@ -92,9 +104,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
-          # Attach all downloaded CLI artifacts regardless of OS
-          zip -r cli-artifacts.zip ./artifacts_download
-          gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg cli-artifacts.zip --generate-notes
+        # Attach downloaded build artifacts (CLI and benchmark outputs).
+        zip -r build-artifacts.zip ./artifacts_download
+        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg build-artifacts.zip --generate-notes
 
   deployTest:
     if: ${{ !startsWith(github.ref, 'refs/heads/release') }}
@@ -113,7 +125,7 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Download CLI artifacts
+    - name: Download build artifacts
       uses: actions/download-artifact@v8
       with:
          path: ./artifacts_download
@@ -130,5 +142,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: env.GITHUB_TOKEN != ''
       run: |
-        zip -r cli-artifacts.zip ./artifacts_download
-        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg cli-artifacts.zip --prerelease --generate-notes
+        zip -r build-artifacts.zip ./artifacts_download
+        gh release create ${{env.CURRENT_VERSION}} ./SkiaSharpCompare/bin/Release/*.*nupkg build-artifacts.zip --prerelease --generate-notes
