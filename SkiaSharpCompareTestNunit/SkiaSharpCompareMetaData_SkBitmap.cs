@@ -25,13 +25,10 @@ namespace SkiaSharpCompareTestNunit
         {
             var pic1 = SKBitmap.Decode(Path.Combine(AppContext.BaseDirectory, pic1Path));
             var pic2 = SKBitmap.Decode(Path.Combine(AppContext.BaseDirectory, pic2Path));
-
             var sut = new ImageCompare(compareMetadata: true);
+            Action act = () => sut.ImagesAreEqual(pic1, pic2);
 
-            var ex = Assert.Throws<NotSupportedException>(() =>
-            {
-                sut.ImagesAreEqual(pic1, pic2);
-            });
+            var ex = Assert.Throws<NotSupportedException>(act);
 
             Assert.That(ex?.Message, Is.EqualTo("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison."));
         }
@@ -56,10 +53,9 @@ namespace SkiaSharpCompareTestNunit
             var pic2 = SKBitmap.Decode(Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithoutGpsMetadata));
 
             var sut = new ImageCompare(compareMetadata: true);
-            var ex = Assert.Throws<NotSupportedException>(() =>
-            {
-                sut.CalcDiff(pic1, pic2);
-            });
+            Action act = () => sut.ImagesAreEqual(pic1, pic2);
+
+            var ex = Assert.Throws<NotSupportedException>(act);
 
             Assert.That(ex?.Message, Is.EqualTo("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison."));
         }
@@ -72,11 +68,9 @@ namespace SkiaSharpCompareTestNunit
             var pic2 = SKBitmap.Decode(Path.Combine(AppContext.BaseDirectory, TestFiles.imageWithGpsMetadata));
 
             var sut = new ImageCompare(compareMetadata: true);
+            Action act = () => sut.ImagesAreEqual(pic1, pic2);
 
-            var ex = Assert.Throws<NotSupportedException>(() =>
-              {
-                  sut.CalcDiff(pic1, pic2);
-              });
+            var ex = Assert.Throws<NotSupportedException>(act);
 
             Assert.That(ex?.Message, Is.EqualTo("Metadata comparison is not implemented for SKBitmap inputs. https://github.com/mono/SkiaSharp/issues/1139 Use the overload with streams or filepath to get support for metadata comparison."));
         }

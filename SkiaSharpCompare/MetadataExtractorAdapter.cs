@@ -2,7 +2,7 @@ using MetadataExtractor;
 using System.Collections.Generic;
 using System.IO;
 
-namespace SkiaSharpCompare.Metadata
+namespace Codeuctivity.SkiaSharpCompare
 {
     /// <summary>
     /// Provides static methods for extracting image metadata and returning it as a normalized dictionary of tag names

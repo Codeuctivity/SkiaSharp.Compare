@@ -1,4 +1,6 @@
-namespace Codeuctivity.SkiaSharpCompare.Cli
+using Codeuctivity.SkiaSharpCompare;
+
+namespace SkiaSharpCompare.Cli
 {
     /// <summary>
     /// Helper that exposes programmatic entry points for the console and tests.
