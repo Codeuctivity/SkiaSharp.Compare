@@ -293,7 +293,7 @@ namespace SkiaSharpCompareTestNunit
             using var pic1 = SKBitmap.Decode(absolutePathPic1);
             using var pic2 = SKBitmap.Decode(absolutePathPic2);
             using var maskPic = SKBitmap.Decode(differenceMaskPic);
-            Action action = () => Compare.CalcDiff(pic1, pic2, maskPic, ResizeOption.Resize);
+            Action action = () => Compare.CalcDiff(pic1, pic2, maskPic, ResizeOption.DontResize);
 
             var exception = Assert.Throws<SkiaSharpCompareException>(action);
 
