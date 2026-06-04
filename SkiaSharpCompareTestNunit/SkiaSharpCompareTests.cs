@@ -158,8 +158,9 @@ namespace SkiaSharpCompareTestNunit
             var sut = new ImageCompare();
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            Action action = () => sut.CalcDiff(absolutePathPic1, absolutePathPic2);
 
-            var exception = Assert.Throws<SkiaSharpCompareException>(() => sut.CalcDiff(absolutePathPic1, absolutePathPic2));
+            var exception = Assert.Throws<SkiaSharpCompareException>(action);
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }
@@ -191,11 +192,11 @@ namespace SkiaSharpCompareTestNunit
             Assert.That(diff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
-        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize, true)]
-        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack2x2px, 0, 0, 0, 0, ResizeOption.DontResize, true)]
-        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, true)]
-        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngWhite2x2px, 0, 0, 0, 0, ResizeOption.DontResize, false)]
-        public void ShouldCalcDiffMaskSKBitmap(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption, bool expectedOutcome)
+        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack2x2px, ResizeOption.Resize, true)]
+        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack2x2px, ResizeOption.DontResize, true)]
+        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngBlack4x4px, ResizeOption.Resize, true)]
+        [TestCase(TestFiles.pngBlack2x2px, TestFiles.pngWhite2x2px, ResizeOption.DontResize, false)]
+        public void ShouldCalcDiffMaskSKBitmap(string pathPic1, string pathPic2, ResizeOption resizeOption, bool expectedOutcome)
         {
             var sut = new ImageCompare(resizeOption);
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
@@ -203,11 +204,8 @@ namespace SkiaSharpCompareTestNunit
 
             using var absolutePic1 = SKBitmap.Decode(absolutePathPic1);
             using var absolutePic2 = SKBitmap.Decode(absolutePathPic2);
-
-            using (var maskImage = sut.CalcDiffMaskImage(absolutePic1, absolutePic2))
-            {
-                Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectedOutcome));
-            }
+            using var maskImage = sut.CalcDiffMaskImage(absolutePic1, absolutePic2);
+            Assert.That(ImageExtensions.IsImageEntirelyBlack(maskImage, TransparencyOptions.IgnoreAlphaChannel), Is.EqualTo(expectedOutcome));
         }
 
         [TestCase(TestFiles.png0Rgba32, TestFiles.png1Rgba32, null, TransparencyOptions.IgnoreAlphaChannel)]
@@ -331,8 +329,9 @@ namespace SkiaSharpCompareTestNunit
             using var pic1 = SKBitmap.Decode(absolutePathPic1);
             using var pic2 = SKBitmap.Decode(absolutePathPic2);
             using var maskPic = SKBitmap.Decode(differenceMaskPic);
+            Action action = () => sut.CalcDiff(pic1, pic2, maskPic);
 
-            var exception = Assert.Throws<SkiaSharpCompareException>(() => sut.CalcDiff(pic1, pic2, maskPic));
+            var exception = Assert.Throws<SkiaSharpCompareException>(action);
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }
@@ -480,8 +479,9 @@ namespace SkiaSharpCompareTestNunit
             var sut = new ImageCompare(ResizeOption.DontResize, transparencyOptions);
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            Action action = () => sut.CalcDiff(absolutePathPic1, absolutePathPic2);
 
-            var exception = Assert.Throws<SkiaSharpCompareException>(() => sut.CalcDiff(absolutePathPic1, absolutePathPic2));
+            var exception = Assert.Throws<SkiaSharpCompareException>(action);
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }
@@ -497,8 +497,9 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
             var absolutePathPic3 = Path.Combine(AppContext.BaseDirectory, pathPic3);
+            Action action = () => sut.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3);
 
-            var exception = Assert.Throws<SkiaSharpCompareException>(() => sut.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3));
+            var exception = Assert.Throws<SkiaSharpCompareException>(action);
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }

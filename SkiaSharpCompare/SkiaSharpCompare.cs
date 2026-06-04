@@ -766,42 +766,5 @@ namespace Codeuctivity.SkiaSharpCompare
 
             return (grownActual, grownExpected, grownMask);
         }
-
-        /// <summary>
-        /// Create a tolerance mask by expanding non-black regions in a diff mask.
-        /// Non-black pixels in diffMask will be grown by padding into broader white areas
-        /// to tolerate local differences (e.g., filenames, timestamps).
-        /// </summary>
-        public static SKBitmap CreateToleranceMaskFromDiff(SKBitmap diffMask, int padding = 3)
-        {
-            ArgumentNullException.ThrowIfNull(diffMask);
-            var w = diffMask.Width;
-            var h = diffMask.Height;
-            var mask = new SKBitmap(w, h, SKColorType.Rgba8888, SKAlphaType.Unpremul);
-            using var canvas = new SKCanvas(mask);
-            canvas.Clear(SKColors.Black);
-
-            using var paint = new SKPaint { Color = SKColors.White, IsAntialias = false };
-
-            for (int y = 0; y < h; y++)
-            {
-                for (int x = 0; x < w; x++)
-                {
-                    var col = diffMask.GetPixel(x, y);
-                    if (col.Alpha > 16 && (col.Red > 16 || col.Green > 16 || col.Blue > 16))
-                    {
-                        var left = Math.Max(0, x - padding);
-                        var top = Math.Max(0, y - padding);
-                        var right = Math.Min(w, x + padding + 1);
-                        var bottom = Math.Min(h, y + padding + 1);
-                        var rect = new SKRectI(left, top, right, bottom);
-                        canvas.DrawRect(rect, paint);
-                    }
-                }
-            }
-
-            canvas.Flush();
-            return mask;
-        }
     }
 }

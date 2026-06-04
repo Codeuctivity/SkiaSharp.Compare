@@ -11,48 +11,40 @@ namespace Codeuctivity.SkiaSharpCompare
     /// such as resizing,  transparency handling, and pixel color shift tolerance. It supports multiple input types,
     /// including file paths,  streams, and in-memory bitmaps. The class also provides methods to generate difference
     /// masks and check for  image equality or size equality.</remarks>
-    public class ImageCompare
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="ImageCompare"/> class with the specified options for resizing,
+    /// transparency handling, and color shift tolerance.
+    /// </remarks>
+    /// <param name="resizeOption">Specifies how images should be resized before comparison. The default is <see
+    /// cref="ResizeOption.DontResize"/>.</param>
+    /// <param name="transparencyOptions">Specifies how transparency should be handled during comparison. The default is <see
+    /// cref="TransparencyOptions.CompareAlphaChannel"/>.</param>
+    /// <param name="pixelColorShiftTolerance">Specifies the tolerance for color shifts in pixel values during comparison.  A value of 0 means no
+    /// tolerance, and higher values allow for greater differences. The default is 0.</param>
+    /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
+    public class ImageCompare(ResizeOption resizeOption = ResizeOption.DontResize, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, int pixelColorShiftTolerance = 0, bool compareMetadata = false)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImageCompare"/> class with the specified options for resizing,
-        /// transparency handling, and color shift tolerance.
-        /// </summary>
-        /// <param name="resizeOption">Specifies how images should be resized before comparison. The default is <see
-        /// cref="ResizeOption.DontResize"/>.</param>
-        /// <param name="transparencyOptions">Specifies how transparency should be handled during comparison. The default is <see
-        /// cref="TransparencyOptions.CompareAlphaChannel"/>.</param>
-        /// <param name="pixelColorShiftTolerance">Specifies the tolerance for color shifts in pixel values during comparison.  A value of 0 means no
-        /// tolerance, and higher values allow for greater differences. The default is 0.</param>
-        /// <param name="compareMetadata">If true, compares image metadata (EXIF, etc.) in addition to pixel data.</param>
-        public ImageCompare(ResizeOption resizeOption = ResizeOption.DontResize, TransparencyOptions transparencyOptions = TransparencyOptions.CompareAlphaChannel, int pixelColorShiftTolerance = 0, bool compareMetadata = false)
-        {
-            ResizeOption = resizeOption;
-            TransparencyOptions = transparencyOptions;
-            PixelColorShiftTolerance = pixelColorShiftTolerance;
-            CompareMetadata = compareMetadata;
-        }
-
         /// <summary>
         /// Gets the resize option that determines how an image should be resized.
         /// </summary>
-        public ResizeOption ResizeOption { get; }
+        public ResizeOption ResizeOption { get; } = resizeOption;
 
         /// <summary>
         /// Gets the transparency options that determine how transparency should be handled during image comparison.
         /// </summary>
-        public TransparencyOptions TransparencyOptions { get; }
+        public TransparencyOptions TransparencyOptions { get; } = transparencyOptions;
 
         /// <summary>
         /// Gets the tolerance level for pixel color shifts in image processing operations.
         /// </summary>
         /// <remarks>This property is typically used to determine whether two pixels are considered
         /// similar in color during image comparison or analysis tasks.</remarks>
-        public int PixelColorShiftTolerance { get; }
+        public int PixelColorShiftTolerance { get; } = pixelColorShiftTolerance;
 
         /// <summary>
         /// Gets a value indicating whether metadata should be included in the comparison operation.
         /// </summary>
-        public bool CompareMetadata { get; }
+        public bool CompareMetadata { get; } = compareMetadata;
 
         /// <summary>
         /// Calculates the difference between two images located at the specified file paths.
@@ -302,6 +294,43 @@ namespace Codeuctivity.SkiaSharpCompare
         public static bool ImagesHaveEqualSize(string pathImage1, string pathImage2)
         {
             return Compare.ImagesHaveEqualSize(pathImage1, pathImage2);
+        }
+
+        /// <summary>
+        /// Create a tolerance mask by expanding non-black regions in a diff mask.
+        /// Non-black pixels in diffMask will be grown by padding into broader white areas
+        /// to tolerate local differences (e.g., filenames, timestamps).
+        /// </summary>
+        public SKBitmap CreateToleranceMaskFromDiff(SKBitmap diffMask, int padding = 10)
+        {
+            ArgumentNullException.ThrowIfNull(diffMask);
+            var w = diffMask.Width;
+            var h = diffMask.Height;
+            var mask = new SKBitmap(w, h, SKColorType.Rgba8888, SKAlphaType.Unpremul);
+            using var canvas = new SKCanvas(mask);
+            canvas.Clear(SKColors.Black);
+
+            using var paint = new SKPaint { Color = SKColors.White, IsAntialias = false };
+
+            for (var y = 0; y < h; y++)
+            {
+                for (var x = 0; x < w; x++)
+                {
+                    var col = diffMask.GetPixel(x, y);
+                    if (col.Alpha > 16 && (col.Red > 16 || col.Green > 16 || col.Blue > 16))
+                    {
+                        var left = Math.Max(0, x - padding);
+                        var top = Math.Max(0, y - padding);
+                        var right = Math.Min(w, x + padding + 1);
+                        var bottom = Math.Min(h, y + padding + 1);
+                        var rect = new SKRectI(left, top, right, bottom);
+                        canvas.DrawRect(rect, paint);
+                    }
+                }
+            }
+
+            canvas.Flush();
+            return mask;
         }
     }
 }
