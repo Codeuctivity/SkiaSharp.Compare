@@ -1,4 +1,3 @@
-using Codeuctivity.SkiaSharpCompare.Cli;
 using NUnit.Framework;
 using System;
 using System.IO;

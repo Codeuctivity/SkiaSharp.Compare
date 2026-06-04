@@ -1,5 +1,6 @@
 ﻿using Codeuctivity.SkiaSharpCompare;
 using NUnit.Framework;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -80,6 +81,22 @@ namespace SkiaSharpCompareTestNunit
 
             Assert.That(actual.MetadataDifferences, Is.EqualTo(expected));
             Assert.That(actual.PixelErrorCount, Is.Zero);
+        }
+
+        [Test]
+        public void CreateToleranceMaskFromDiff_CreatesWhiteRectangle()
+        {
+            var pic1 = Path.Combine(AppContext.BaseDirectory, TestFiles.png0Rgba32);
+            var pic2 = Path.Combine(AppContext.BaseDirectory, TestFiles.png1Rgba32);
+            var sut = new ImageCompare();
+
+            using var diffMask = sut.CalcDiffMaskImage(pic1, pic2);
+            using var tolFromBitmap = sut.CreateToleranceMaskFromDiff(diffMask);
+
+            var expectedImage = SKBitmap.Decode(TestFiles.createToleranceMaskFromDiff);
+
+            Assert.That(sut.ImagesAreEqual(tolFromBitmap, expectedImage), Is.True);
+            Assert.That(sut.CalcDiff(pic1, pic1, TestFiles.createToleranceMaskFromDiff).PixelErrorCount, Is.Zero);
         }
 
         private static string FormatMetadata(Dictionary<string, (string? ValueA, string? ValueB)>? metadata)
