@@ -11,7 +11,7 @@
 	<Version Condition="'$(CURRENT_VERSION)' == ''">0.0.1</Version>
 	<AssemblyVersion>$(Version)</AssemblyVersion>
 	<FileVersion>$(Version)</FileVersion>
-	<PackageVersion>$(Version)</PackageVersion>
+	<PackageVersion>$(Version)-preview.1.1</PackageVersion>
 	<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
 	<PackageIcon>NugetIcon.png</PackageIcon>
 	<PackageProjectUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</PackageProjectUrl>
@@ -45,8 +45,8 @@
 
   <ItemGroup>
 	<PackageReference Include="MetadataExtractor" Version="2.9.3" />
-	<PackageReference Include="SkiaSharp" Version="3.119.4" />
-	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.4" />
+	<PackageReference Include="SkiaSharp" Version="4.147.0-preview.3.1" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.147.0-preview.3.1" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.16.0.128591">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
