@@ -1,6 +1,6 @@
-using SkiaSharpCompare.Metadata;
+using Codeuctivity.SkiaSharpCompare;
 
-namespace Codeuctivity.SkiaSharpCompare.Cli
+namespace SkiaSharpCompare.Cli
 {
     internal static class Program
     {
