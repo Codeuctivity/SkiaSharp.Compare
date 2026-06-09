@@ -20,5 +20,6 @@
         public const string imageWithoutGpsMetadata = "./../../../TestData/imageWithoutGpsMetadata.jpg";
 
         public const string imageWithGpsMetadata = "./../../../TestData/imageWithGpsMetadata.jpg";
+        public const string createToleranceMaskFromDiff = "./../../../TestData/createToleranceMaskFromDiff.png";
     }
 }
