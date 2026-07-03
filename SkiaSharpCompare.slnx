@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/workflows/cla.yml" />
+    <File Path=".github/workflows/dotnet.yml" />
+    <File Path=".github/workflows/stale.yml" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="SkiaSharpCompare.Cli.Tests/SkiaSharpCompare.Cli.Tests.csproj" />
+  <Project Path="SkiaSharpCompare.Cli/SkiaSharpCompare.Cli.csproj" />
+  <Project Path="SkiaSharpCompare/SkiaSharpCompare.csproj" />
+  <Project Path="SkiaSharpCompareTestNunit/SkiaSharpCompareTestNunit.csproj" />
+</Solution>
