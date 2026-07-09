@@ -46,7 +46,7 @@
   <ItemGroup>
 	<PackageReference Include="MetadataExtractor" Version="2.9.3" />
 	<PackageReference Include="SkiaSharp" Version="4.150.0" />
-	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.148.0" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.150.0" />
 	<PackageReference Include="SonarAnalyzer.CSharp" Version="10.27.0.140913">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
