@@ -53,6 +53,7 @@ jobs:
       with:
         name: cli-artifacts-${{ matrix.os }}
         path: ./artifacts/cli
+        retention-days: 7
 
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
