@@ -1,11 +1,14 @@
 {
-    "cSpell.words": [
-        "Codacy",
-        "Codeuctivity",
-        "Nuget",
-        "Nunit",
-        "Rgba",
-        "nupkg",
-        "snupkg"
-    ]
+  "cSpell.words": [
+    "Codacy",
+    "Codeuctivity",
+    "Diffmask",
+    "Dont",
+    "Nuget",
+    "Nunit",
+    "nupkg",
+    "Rgba",
+    "Skia",
+    "snupkg"
+  ]
 }

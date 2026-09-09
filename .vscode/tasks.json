@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ImageSharpCompareTestNunit/ImageSharpCompareTestNunit.csproj",
+                "${workspaceFolder}/SkiaSharpCompareTestNunit/SkiaSharpCompareTestNunit.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/ImageSharpCompareTestNunit/ImageSharpCompareTestNunit.csproj",
+                "${workspaceFolder}/SkiaSharpCompareTestNunit/SkiaSharpCompareTestNunit.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/ImageSharpCompareTestNunit/ImageSharpCompareTestNunit.csproj",
+                "${workspaceFolder}/SkiaSharpCompareTestNunit/SkiaSharpCompareTestNunit.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -42,6 +42,18 @@
             "label": "update nuget packages",
             "type": "shell",
             "command": "'./.vscode/updateNuget.sh'",
+            "problemMatcher": []
+        },
+        {
+            "label": "update nuget packages (windows)",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "./.vscode/updateNuget.ps1"
+            ],
             "problemMatcher": []
         }
     ]

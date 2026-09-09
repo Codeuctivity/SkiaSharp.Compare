@@ -8,15 +8,26 @@ Inspired by the image compare feature "Visual verification API" of [TestApi](htt
 
 SkiaSharpCompare focus on os agnostic support and therefore depends on [SkiaSharp](https://github.com/mono/SkiaSharp).
 
-**NOTE**: For now the **A**lpha-channel is ignored.
-
 ## Example simple show cases
 
-```csharp
-bool imagesAreEqual = SkiaSharpCompare.ImagesAreEqual("actual.png", "expected.png");
+### Compares each RGB value of each pixel to determine the equality
 
-// calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
-ICompareResult calcDiff = SkiaSharpCompare.CalcDiff("actual.png", "expected.png");
+```csharp
+bool isEqual = Compare.ImagesAreEqual("actual.png", "expected.png");
+```
+
+### [Calculates diff](https://dotnetfiddle.net/tTnq2j)
+
+```csharp
+var calcDiff = Compare.CalcDiff("2x2PixelBlack.png", "2x2PixelWhite.png");
+Console.WriteLine($"PixelErrorCount: {calcDiff.PixelErrorCount}");
+Console.WriteLine($"PixelErrorPercentage: {calcDiff.PixelErrorPercentage}");
+Console.WriteLine($"AbsoluteError: {calcDiff.AbsoluteError}");
+Console.WriteLine($"MeanError: {calcDiff.MeanError}");
+// PixelErrorCount: 4
+// PixelErrorPercentage: 100
+// AbsoluteError: 3060
+// MeanError: 765
 ```
 
 ## Example show case allowing some tolerated diff
@@ -33,7 +44,7 @@ Imagine two images you want to compare, and want to accept the found difference 
 
 ### Tolerance mask image
 
-using "compare.CalcDiff" you can calc a diff mask from actual and reference image
+Using **CalcDiffMaskImage** you can calc a diff mask from actual and reference image
 
 Example - Create difference image
 
@@ -51,4 +62,30 @@ Example - Compare two images using the created difference image. Add white pixel
 ```csharp
 var maskedDiff = SkiaSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
 Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(0));
+```
+
+### [Configure transparency, enable metadata compare, ...](https://dotnetfiddle.net/lygaRU)
+
+```csharp
+var comparer = new ImageCompare(ResizeOption.Resize, TransparencyOptions.CompareAlphaChannel, pixelColorShiftTolerance: 5, compareMetadata: true);
+var calcDiff = comparer.CalcDiff("pngPartialTransparent4x4Pixel.png", "2x2PixelWhite.png");
+// Displaying the differences
+Console.WriteLine($"PixelErrorCount: {calcDiff.PixelErrorCount}");
+Console.WriteLine($"PixelErrorPercentage: {calcDiff.PixelErrorPercentage}");
+Console.WriteLine($"AbsoluteError: {calcDiff.AbsoluteError}");
+Console.WriteLine($"MeanError: {calcDiff.MeanError}");
+foreach (var metadataDifference in calcDiff.MetadataDifferences)
+    Console.WriteLine($"Metadata Difference: {metadataDifference}");
+
+// PixelErrorCount: 16
+// PixelErrorPercentage: 100
+// AbsoluteError: 14272
+// MeanError: 892
+// Metadata Difference: [File:File Name, (pngPartialTransparent4x4Pixel.png, 2x2PixelWhite.png)]
+// Metadata Difference: [File:File Size, (688 bytes, 556 bytes)]
+// Metadata Difference: [PNG-IHDR:Color Type, (True Color with Alpha, True Color)]
+// Metadata Difference: [PNG-IHDR:Image Height, (4, 2)]
+// Metadata Difference: [PNG-IHDR:Image Width, (4, 2)]
+// Metadata Difference: [PNG-tEXt:Textual Data, (Software: Paint.NET 5.1.2, Comment: Created with GIMP)]
+// ...
 ```
