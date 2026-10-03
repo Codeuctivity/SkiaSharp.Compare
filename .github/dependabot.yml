@@ -27,6 +27,13 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    # SkiaSharp and its native assets must always have the same version - separate PRs each fail
+    # the build until the other one is merged, so update them together in one PR.
+    groups:
+      skiasharp:
+        patterns:
+          - "SkiaSharp"
+          - "SkiaSharp.*"
     ignore:
       - dependency-name: "nunit"
       - dependency-name: "coverlet.collector"
